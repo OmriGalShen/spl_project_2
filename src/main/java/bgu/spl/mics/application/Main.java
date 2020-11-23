@@ -23,6 +23,6 @@ import com.google.gson.GsonBuilder;
  */
 public class Main {
 	public static void main(String[] args) {
-
+		System.out.println("SPL_PROJECT_2 Marina's Revenge!!!!");
 	}
 }
