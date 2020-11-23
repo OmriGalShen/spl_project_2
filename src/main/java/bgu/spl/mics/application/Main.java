@@ -3,8 +3,8 @@ package bgu.spl.mics.application;
 import bgu.spl.mics.*;
 import bgu.spl.mics.application.passiveObjects.*;
 import bgu.spl.mics.application.services.*;
-import bgu.spl.mics.example.messages.ExampleEvent;
-import bgu.spl.mics.example.services.ExampleEventHandlerService;
+//import bgu.spl.mics.example.messages.ExampleEvent;
+//import bgu.spl.mics.example.services.ExampleEventHandlerService;
 
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -23,6 +23,6 @@ import com.google.gson.GsonBuilder;
  */
 public class Main {
 	public static void main(String[] args) {
-		
+
 	}
 }
