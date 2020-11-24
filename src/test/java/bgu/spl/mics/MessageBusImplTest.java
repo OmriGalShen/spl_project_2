@@ -8,40 +8,44 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MessageBusImplTest {
     private MessageBusImpl testMessage;
+    private Broadcast testBroadcast;
+    private MicroService testMicroService;
+
+
     @BeforeEach
     void setUp() {
         testMessage = new MessageBusImpl();
     }
 
     @Test
-    void subscribeEvent() {
+    void testSubscribeEvent() {
     }
 
     @Test
-    void subscribeBroadcast() {
+    void testSubscribeBroadcast() {
     }
 
     @Test
-    void complete() {
+    void testComplete() {
     }
 
     @Test
-    void sendBroadcast() {
+    void testSendBroadcast() {
     }
 
     @Test
-    void sendEvent() {
+    void testSendEvent() {
     }
 
     @Test
-    void register() {
+    void testRegister() {
     }
 
     @Test
-    void unregister() {
+    void testUnregister() {
     }
 
     @Test
-    void awaitMessage() {
+    void testAwaitMessage() {
     }
 }

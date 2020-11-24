@@ -37,7 +37,7 @@ public class FutureTest {
     }
 
     @Test
-    void isDone() {
+    void testIsDone() {
         String str = "someResult";
         future.resolve(str);
         assertTrue(future.isDone());
