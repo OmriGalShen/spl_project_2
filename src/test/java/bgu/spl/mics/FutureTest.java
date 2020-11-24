@@ -28,4 +28,26 @@ public class FutureTest {
         assertTrue(future.isDone());
         assertTrue(str.equals(future.get()));
     }
+
+    @Test
+    void testSimpleGet() {
+        String str = "someResult";
+        future.resolve(str);
+        assertTrue(str.equals(future.get()));
+    }
+
+    @Test
+    void isDone() {
+        String str = "someResult";
+        future.resolve(str);
+        assertTrue(future.isDone());
+    }
+
+    @Test
+    void testTimedGet() {
+        String str = "someResult";
+        future.resolve(str);
+        assertTrue(str.equals(future.get()));
+
+    }
 }
