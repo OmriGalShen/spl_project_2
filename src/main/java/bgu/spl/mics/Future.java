@@ -31,21 +31,22 @@ public class Future<T> {
      */
 	public T get() {
 		
-        return null; 
+        return this.result;
 	}
 	
 	/**
      * Resolves the result of this Future object.
      */
 	public void resolve (T result) {
-		
+		this.result = result;
+		this.isDone= true;
 	}
 	
 	/**
      * @return true if this object has been resolved, false otherwise
      */
 	public boolean isDone() {
-		return false;
+		return this.isDone;
 	}
 	
 	/**
