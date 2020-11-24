@@ -13,7 +13,7 @@ public class Ewok {
     /**
      * Constructor for class Ewok
      * Added*
-     * @param serialNumber
+     * @param serialNumber a unique number to represent the Ewok instance
      */
 	public Ewok(int serialNumber)
     {
