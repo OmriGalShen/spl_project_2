@@ -42,10 +42,6 @@ class MessageBusImplTest {
     }
 
     @Test
-    void testUnregister() {
-    }
-
-    @Test
     void testAwaitMessage() {
     }
 }
