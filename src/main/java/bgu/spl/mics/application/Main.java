@@ -51,6 +51,10 @@ public class Main {
 		for(int i=0;i<attacksJson.size();i++)
 		{
 			int duration = Integer.parseInt(attacksJson.get(i).getAsJsonObject().get("duration").toString());
+			String arraystr =  attacksJson.get(i).getAsJsonObject().get("serials").toString();
+			int[] arr = Arrays.stream(arraystr.substring(1, arraystr.length()-1).split(","))
+					.map(String::trim).mapToInt(Integer::parseInt).toArray();
+			System.out.println(Arrays.toString(arr));
 			System.out.println("duration:"+duration);
 		}
 
