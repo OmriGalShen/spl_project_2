@@ -47,6 +47,7 @@ class MessageBusImplTest {
         testC3PO.sendBroadcast(testBroadcast);
         try {
             Message message = testMessageBus.awaitMessage(testR2D2);
+            assertTrue(message instanceof TerminateBroadcast);
             assertEquals(testBroadcast,message);
         }
         catch (InterruptedException e){
@@ -70,6 +71,7 @@ class MessageBusImplTest {
         testC3PO.sendEvent(testEvent);
         try {
             Message message = testMessageBus.awaitMessage(testR2D2);
+            assertTrue(message instanceof AttackEvent);
             assertEquals(testEvent,message);
         }
         catch (InterruptedException e){
