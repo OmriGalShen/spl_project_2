@@ -9,7 +9,12 @@ class EwokTest {
     private Ewok testEwok;
     @BeforeEach
     void setUp() {
-        testEwok = new Ewok(1);
+        try {
+            testEwok = new Ewok(1);
+        }
+        catch(Exception e){
+            fail("Failed constructing Ewok object");
+        }
     }
 
     @Test
