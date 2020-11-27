@@ -1,4 +1,6 @@
 package bgu.spl.mics;
+import bgu.spl.mics.application.services.C3POMicroservice;
+
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -8,7 +10,24 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Only private fields and methods can be added to this class.
  */
 public class MessageBusImpl implements MessageBus {
-	
+	private static MessageBusImpl instance;
+	/**
+	 * Private constructor
+	 * Added*
+	 */
+	private MessageBusImpl() {
+
+	}
+
+	public static MessageBusImpl getInstance(){
+		if(instance == null){
+			synchronized (MessageBusImpl.class){
+				if(instance==null)
+					instance = new MessageBusImpl();
+			}
+		}
+		return instance;
+	}
 	
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
