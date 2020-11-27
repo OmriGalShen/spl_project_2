@@ -62,7 +62,7 @@ public class Future<T> {
      */
 	public T get(long timeout, TimeUnit unit) {
 		
-        return null;
+        return this.result; // TODO: need actual implementation
 	}
 
 }

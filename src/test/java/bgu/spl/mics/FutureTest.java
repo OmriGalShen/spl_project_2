@@ -23,38 +23,36 @@ public class FutureTest {
 
     @Test
     public void testResolve(){
-        String str = "someResult";
-        future.resolve(str);
+        assertFalse(future.isDone());
+        String resolveStr = "result";
+        future.resolve(resolveStr);
         assertTrue(future.isDone());
-        assertTrue(str.equals(future.get()));
+        assertEquals(resolveStr,future.get());
     }
 
     @Test
     void testSimpleGet() {
-        String str = "someResult";
-        future.resolve(str);
-        assertTrue(str.equals(future.get()));
+        assertFalse(future.isDone());
+        String resolveStr = "result";
+        future.resolve(resolveStr);
+        assertEquals(resolveStr,future.get());
     }
 
     @Test
     void testIsDone() {
-        String str = "someResult";
-        future.resolve(str);
+        assertFalse(future.isDone());
+        String resolveStr = "someResult";
+        future.resolve(resolveStr);
         assertTrue(future.isDone());
     }
 
     @Test
     void testTimedGet() {
-        try {
-            assertEquals(future.get(0,TimeUnit.SECONDS),null);
-            String str = "someResult";
-            future.resolve(str);
-            assertTrue(str.equals(future.get(5,TimeUnit.SECONDS)));
-        }
-        catch (Exception e)
-        {
-
-        }
-
+        assertFalse(future.isDone());
+        assertNull(future.get(10,TimeUnit.MICROSECONDS));
+        assertFalse(future.isDone());
+        String resolveStr = "result";
+        future.resolve(resolveStr);
+        assertEquals(resolveStr,future.get(10,TimeUnit.SECONDS));
     }
 }
