@@ -9,12 +9,7 @@ class EwokTest {
     private Ewok testEwok;
     @BeforeEach
     void setUp() {
-        try {
-            testEwok = new Ewok(1);
-        }
-        catch(Exception e){
-            fail("Failed constructing Ewok object");
-        }
+        testEwok = new Ewok(1);//should initialize with available=true
     }
 
     @Test
@@ -26,9 +21,7 @@ class EwokTest {
 
     @Test
     void release() {
-        assertTrue(testEwok.available);
-        testEwok.acquire();
-        assertFalse(testEwok.available);
+        testEwok.available=false;
         testEwok.release();
         assertTrue(testEwok.available);
     }
