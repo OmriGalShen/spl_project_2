@@ -20,24 +20,28 @@ class MessageBusImplTest {
     }
 
     @Test
-    void testSubscribeEvent() {
-        TerminateBroadcast testBroadcast = new TerminateBroadcast();//example of Broadcast
-    }
-
-    @Test
-    void testSubscribeBroadcast() {
-        TerminateBroadcast testBroadcast = new TerminateBroadcast();//example of Broadcast
-    }
-
-    @Test
     void testComplete() {
+        AttackEvent testEvent = new AttackEvent(); //example of event
+        C3POMicroservice testC3PO = new C3POMicroservice(); //example of Microservice
+        testMessageBus.register(testC3PO);
+        Future<Boolean> c3p0Future = testC3PO.sendEvent(testEvent);
+        if(c3p0Future==null)fail();
+        testMessageBus.complete(testEvent,true); //should resolve c3p0Future with the value true
+        assertTrue(c3p0Future.isDone()); //check if complete resolved the future
+        assertEquals(true,c3p0Future.get()); //check if the resolved passed the true value
     }
 
+    /**
+     * This test checks the methods:
+     * awaitMessage, sendBroadcast, subscribeBroadcast and register
+     */
     @Test
-    void testSendBroadcast() {
+    void testBroadcast() {
         TerminateBroadcast testBroadcast = new TerminateBroadcast();//example of Broadcast
         C3POMicroservice testC3PO = new C3POMicroservice(); //example of Microservice
         R2D2Microservice testR2D2 = new R2D2Microservice(100);//example of Microservice
+        testMessageBus.register(testC3PO);
+        testMessageBus.register(testR2D2);
         testR2D2.subscribeBroadcast(TerminateBroadcast.class, new Callback<TerminateBroadcast>() {
             @Override
             public void call(TerminateBroadcast c) {
@@ -53,14 +57,19 @@ class MessageBusImplTest {
         catch (InterruptedException e){
             System.out.println("InterruptedException");
         }
-
     }
 
+    /**
+     * This test checks the methods:
+     * awaitMessage, sendEvent, subscribeEvent and register
+     */
     @Test
-    void testSendEvent() {
+    void testEvent() {
         AttackEvent testEvent = new AttackEvent(); //example of event
         C3POMicroservice testC3PO = new C3POMicroservice(); //example of Microservice
         R2D2Microservice testR2D2 = new R2D2Microservice(100);//example of Microservice
+        testMessageBus.register(testC3PO);
+        testMessageBus.register(testR2D2);
         testR2D2.subscribeEvent(AttackEvent.class,new Callback<AttackEvent>() { //empty callback
             @Override
             public void call(AttackEvent c) {
@@ -77,13 +86,5 @@ class MessageBusImplTest {
         catch (InterruptedException e){
             System.out.println("InterruptedException");
         }
-    }
-
-    @Test
-    void testRegister() {
-    }
-
-    @Test
-    void testAwaitMessage() {
     }
 }
