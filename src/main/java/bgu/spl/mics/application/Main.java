@@ -31,7 +31,6 @@ public class Main {
 
 		handleJsonInput(inputFilePath);
 
-		System.out.println("SPL_PROJECT_2 Marina's Revenge!!!!");
 	}
 
 	private static void handleJsonInput(String inputFilePath) {
