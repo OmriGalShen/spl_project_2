@@ -23,7 +23,6 @@ class MessageBusImplTest {
     void testComplete() {
         AttackEvent testEvent = new AttackEvent(); //example of event
         C3POMicroservice testC3PO = new C3POMicroservice(); //example of Microservice
-        testMessageBus.register(testC3PO);
         Future<Boolean> c3p0Future = testC3PO.sendEvent(testEvent);
         if(c3p0Future==null)fail();
         testMessageBus.complete(testEvent,true); //should resolve c3p0Future with the value true
