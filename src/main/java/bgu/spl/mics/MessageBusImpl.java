@@ -1,6 +1,9 @@
 package bgu.spl.mics;
 import bgu.spl.mics.application.services.C3POMicroservice;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -11,6 +14,12 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class MessageBusImpl implements MessageBus {
 	private static MessageBusImpl instance;
+	// for each  microservice who registered should create
+	// A queue of messages and should save which
+	// type of broadcasts and events he is subscribed to
+	HashMap<MicroService, LinkedList<Message>> microServiceMessages;
+	HashMap<MicroService,LinkedList<Class<? extends Message>>> microServiceSubscriptions;
+
 	/**
 	 * Private constructor
 	 * Added*
@@ -58,12 +67,16 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public void register(MicroService m) {
-		
+		LinkedList<Message> messagesQueue = new LinkedList<Message>();
+		LinkedList<Class<? extends Message>> messageTypeQueue = new LinkedList<Class<? extends Message>>();
+		microServiceMessages.put(m,messagesQueue);
+		microServiceSubscriptions.put(m,messageTypeQueue);
 	}
 
 	@Override
 	public void unregister(MicroService m) {
-		
+		microServiceMessages.remove(m);
+		microServiceSubscriptions.remove(m);
 	}
 
 	@Override
