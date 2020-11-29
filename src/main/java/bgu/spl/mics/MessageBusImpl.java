@@ -15,11 +15,11 @@ public class MessageBusImpl implements MessageBus {
 	 * Private constructor
 	 * Added*
 	 */
-	private MessageBusImpl() {
+	private MessageBusImpl() { //Singleton pattern
 
 	}
 
-	public static MessageBusImpl getInstance(){
+	public static MessageBusImpl getInstance(){ //Singleton pattern
 		if(instance == null){
 			synchronized (MessageBusImpl.class){
 				if(instance==null)
