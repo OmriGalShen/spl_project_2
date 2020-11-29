@@ -1,5 +1,9 @@
 package bgu.spl.mics;
 
+import bgu.spl.mics.application.messages.AttackEvent;
+import org.graalvm.compiler.asm.sparc.SPARCAssembler;
+
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -23,7 +27,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class MicroService implements Runnable { 
     private String name;
     private boolean terminate;
-
+    private MessageBusImpl messageBus;
+    private HashMap<Class<? extends Message>,Callback> callbackMap;
 
     /**
      * @param name the micro-service name (used mainly for debugging purposes -
@@ -32,6 +37,8 @@ public abstract class MicroService implements Runnable {
     public MicroService(String name) {
     	this.name = name;
     	this.terminate = false;
+        this.messageBus = MessageBusImpl.getInstance();
+        this.callbackMap = new HashMap<>();
     }
 
     /**
@@ -56,7 +63,7 @@ public abstract class MicroService implements Runnable {
      *                 queue.
      */
     protected final <T, E extends Event<T>> void subscribeEvent(Class<E> type, Callback<E> callback) {
-    	
+        callbackMap.put(type,callback);
     }
 
     /**
@@ -107,7 +114,7 @@ public abstract class MicroService implements Runnable {
      * @param b The broadcast message to send
      */
     protected final void sendBroadcast(Broadcast b) {
-    	
+        this.messageBus.sendBroadcast(b);
     }
 
     /**
@@ -121,7 +128,7 @@ public abstract class MicroService implements Runnable {
      *               {@code e}.
      */
     protected final <T> void complete(Event<T> e, T result) {
-    	
+    	this.messageBus.complete(e,result);
     }
 
     /**
@@ -151,11 +158,21 @@ public abstract class MicroService implements Runnable {
      */
     @Override
     public final void run() {
-    	// register to MessageBus
+    	this.messageBus.register(this);
         this.initialize(); // e.g derived subscribed to events and broadcasts
-        // while this.terminate == false:
-        // loop of awaitMessage from MessageBus and run the callback
-        // unregister from MessageBus
+        while (!this.terminate){
+            try {
+                Message m = this.messageBus.awaitMessage(this); //Blocking!!!
+                Class<? extends Message> messageType = m.getClass();
+                Callback<? extends Message> callback = this.callbackMap.get(messageType);
+//                if(m.getClass().isAssignableFrom(Event.class))
+//                    callback.call(m);
+            } catch (InterruptedException e) {
+                System.out.println("Microservice: "+this.name+" was Interrupted");
+                e.printStackTrace();
+            }
+        }
+        this.messageBus.unregister(this);
     }
 
 }
