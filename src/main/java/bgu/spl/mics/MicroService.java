@@ -23,9 +23,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class MicroService implements Runnable { 
     private String name;
     private boolean terminate;
-    // for each  microservice who registered should create
-    // A queue of messages and should save which
-    // type of broadcasts and events he is subscribed to
 
 
     /**
