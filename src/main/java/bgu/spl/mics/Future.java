@@ -31,7 +31,7 @@ public class Future<T> {
      * 	       
      */
 	public T get() {
-		
+//		while(!isDone){};
         return this.result;
 	}
 	
