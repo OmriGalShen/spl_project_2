@@ -21,14 +21,20 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  */
 public abstract class MicroService implements Runnable { 
-    
+    private String name;
+    private boolean terminate;
+    // for each  microservice who registered should create
+    // A queue of messages and should save which
+    // type of broadcasts and events he is subscribed to
+
 
     /**
      * @param name the micro-service name (used mainly for debugging purposes -
      *             does not have to be unique)
      */
     public MicroService(String name) {
-    	
+    	this.name = name;
+    	this.terminate = false;
     }
 
     /**
@@ -131,7 +137,7 @@ public abstract class MicroService implements Runnable {
      * message.
      */
     protected final void terminate() {
-    	
+    	this.terminate = false;
     }
 
     /**
@@ -139,7 +145,7 @@ public abstract class MicroService implements Runnable {
      *         construction time and is used mainly for debugging purposes.
      */
     public final String getName() {
-        return null;
+        return this.name;
     }
 
     /**
@@ -148,7 +154,11 @@ public abstract class MicroService implements Runnable {
      */
     @Override
     public final void run() {
-    	
+    	// register to MessageBus
+        this.initialize(); // e.g derived subscribed to events and broadcasts
+        // while this.terminate == false:
+        // loop of awaitMessage from MessageBus and run the callback
+        // unregister from MessageBus
     }
 
 }
