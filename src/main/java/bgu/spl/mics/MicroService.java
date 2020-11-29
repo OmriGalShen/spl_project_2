@@ -103,8 +103,8 @@ public abstract class MicroService implements Runnable {
      * 	       			null in case no micro-service has subscribed to {@code e.getClass()}.
      */
     protected final <T> Future<T> sendEvent(Event<T> e) {
-    	
-        return null; 
+    	this.messageBus.sendEvent(e);
+        return new Future<T>();
     }
 
     /**
@@ -163,12 +163,18 @@ public abstract class MicroService implements Runnable {
         while (!this.terminate){
             try {
                 Message m = this.messageBus.awaitMessage(this); //Blocking!!!
-                Class<? extends Message> messageType = m.getClass();
-                Callback<? extends Message> callback = this.callbackMap.get(messageType);
-//                if(m.getClass().isAssignableFrom(Event.class))
-//                    callback.call(m);
+                if(m != null) {
+                    Callback callback = this.callbackMap.get(m.getClass());
+                    callback.call(m);
+                }
+                else
+                    throw new NullPointerException();
             } catch (InterruptedException e) {
                 System.out.println("Microservice: "+this.name+" was Interrupted");
+                e.printStackTrace();
+            }
+            catch (NullPointerException e){
+                System.out.println("Await message returned null");
                 e.printStackTrace();
             }
         }
