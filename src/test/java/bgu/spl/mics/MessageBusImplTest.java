@@ -91,8 +91,8 @@ class MessageBusImplTest {
     @Test
     void testAwaitMessage() {
         AttackEvent testEvent = new AttackEvent(); //example of event
-        //example of a sending Microservice
-        C3POMicroservice testC3PO = new C3POMicroservice();
+        C3POMicroservice testC3PO = new C3POMicroservice(); //example of Microservice
+        R2D2Microservice testR2D2 = new R2D2Microservice(100);//example of Microservice
         try{
             testMessageBus.awaitMessage(testC3PO);
             fail("awaitMessage should throw IllegalStateException " +
@@ -102,7 +102,6 @@ class MessageBusImplTest {
             assertTrue(e instanceof IllegalStateException);
         }
         //example of a receiving Microservice
-        R2D2Microservice testR2D2 = new R2D2Microservice(100);
         testMessageBus.register(testC3PO);
         testMessageBus.register(testR2D2);
         testR2D2.subscribeEvent(AttackEvent.class,new Callback<AttackEvent>() {
