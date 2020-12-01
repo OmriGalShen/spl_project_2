@@ -54,7 +54,7 @@ class MessageBusImplTest {
             Message message = testMessageBus.awaitMessage(testR2D2);
             if(message == null) fail("Message was null");
             else{
-                assertTrue(message instanceof AttackEvent);
+                assertTrue(message instanceof TerminateBroadcast);
                 assertEquals(testBroadcast,message);
             }
         }
