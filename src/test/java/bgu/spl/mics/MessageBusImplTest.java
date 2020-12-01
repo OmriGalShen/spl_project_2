@@ -52,14 +52,10 @@ class MessageBusImplTest {
         testC3PO.sendBroadcast(testBroadcast);
         try {
             Message message = testMessageBus.awaitMessage(testR2D2);
-            if(message == null) fail("Message was null");
-            else{
-                assertTrue(message instanceof TerminateBroadcast);
-                assertEquals(testBroadcast,message);
-            }
+            assertEquals(testBroadcast,message);
         }
-        catch (InterruptedException e){
-            fail("awaitMessage thrown InterruptedException");
+        catch (Exception e){
+            fail("awaitMessage thrown Exception");
         }
     }
 
@@ -84,14 +80,10 @@ class MessageBusImplTest {
         testC3PO.sendEvent(testEvent);
         try {
             Message message = testMessageBus.awaitMessage(testR2D2);
-            if(message == null) fail("Message was null");
-            else{
-                assertTrue(message instanceof AttackEvent);
-                assertEquals(testEvent,message);
-            }
+            assertEquals(testEvent,message);
         }
-        catch (InterruptedException e){
-            fail("awaitMessage thrown InterruptedException");
+        catch (Exception e){
+            fail("awaitMessage thrown Exception");
         }
     }
 
@@ -130,6 +122,9 @@ class MessageBusImplTest {
         }
         catch (InterruptedException e){
             fail("awaitMessage thrown InterruptedException");
+        }
+        catch (IllegalStateException e){
+            fail("awaitMessage thrown IllegalStateException");
         }
     }
 }
