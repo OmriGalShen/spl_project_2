@@ -24,15 +24,17 @@ class MessageBusImplTest {
         AttackEvent testEvent = new AttackEvent(); //example of event
         C3POMicroservice testC3PO = new C3POMicroservice(); //example of Microservice
         Future<Boolean> c3p0Future = testC3PO.sendEvent(testEvent);
-        if(c3p0Future==null)fail();
-        testMessageBus.complete(testEvent,true); //should resolve c3p0Future with the value true
-        assertTrue(c3p0Future.isDone()); //check if complete resolved the future
-        assertEquals(true,c3p0Future.get()); //check if the resolved passed the true value
+        if(c3p0Future==null)fail("Returned Future was null");
+        else {
+            testMessageBus.complete(testEvent, true); //should resolve c3p0Future with the value true
+            assertTrue(c3p0Future.isDone()); //check if complete resolved the future
+            assertEquals(true, c3p0Future.get()); //check if the resolved passed the value
+        }
     }
 
     /**
      * This test checks the methods:
-     * awaitMessage, sendBroadcast, subscribeBroadcast and register
+     * sendBroadcast, subscribeBroadcast and register
      */
     @Test
     void testBroadcast() {
@@ -44,7 +46,7 @@ class MessageBusImplTest {
         testR2D2.subscribeBroadcast(TerminateBroadcast.class, new Callback<TerminateBroadcast>() {
             @Override
             public void call(TerminateBroadcast c) {
-
+                //empty callback
             }
         });
         testC3PO.sendBroadcast(testBroadcast);
@@ -54,13 +56,14 @@ class MessageBusImplTest {
             assertEquals(testBroadcast,message);
         }
         catch (InterruptedException e){
+            fail();
             System.out.println("InterruptedException");
         }
     }
 
     /**
      * This test checks the methods:
-     * awaitMessage, sendEvent, subscribeEvent and register
+     * sendEvent, subscribeEvent and register
      */
     @Test
     void testEvent() {
@@ -72,7 +75,7 @@ class MessageBusImplTest {
         testR2D2.subscribeEvent(AttackEvent.class,new Callback<AttackEvent>() { //empty callback
             @Override
             public void call(AttackEvent c) {
-
+                //empty callback
             }
         });
 
@@ -83,6 +86,43 @@ class MessageBusImplTest {
             assertEquals(testEvent,message);
         }
         catch (InterruptedException e){
+            fail();
+            System.out.println("InterruptedException");
+        }
+    }
+
+
+    @Test
+    void testAwaitMessage() {
+        AttackEvent testEvent = new AttackEvent(); //example of event
+        //example of a sending Microservice
+        C3POMicroservice testC3PO = new C3POMicroservice();
+        try{
+            testMessageBus.awaitMessage(testC3PO);
+            fail("awaitMessage should throw IllegalStateException " +
+                    "for unregistered microservice");
+        }
+        catch (InterruptedException e){fail();}
+        catch (IllegalStateException e){}
+        //example of a receiving Microservice
+        R2D2Microservice testR2D2 = new R2D2Microservice(100);
+        testMessageBus.register(testC3PO);
+        testMessageBus.register(testR2D2);
+        testR2D2.subscribeEvent(AttackEvent.class,new Callback<AttackEvent>() { //empty callback
+            @Override
+            public void call(AttackEvent c) {
+                //empty callback
+            }
+        });
+
+        testC3PO.sendEvent(testEvent);
+        try {
+            Message message = testMessageBus.awaitMessage(testR2D2);
+            assertTrue(message instanceof AttackEvent);
+            assertEquals(testEvent,message);
+        }
+        catch (InterruptedException e){
+            fail();
             System.out.println("InterruptedException");
         }
     }
