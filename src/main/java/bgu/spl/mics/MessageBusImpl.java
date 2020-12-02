@@ -53,7 +53,7 @@ public class MessageBusImpl implements MessageBus {
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
 		microServiceSubscriptions.get(m).add(type);
-		//TODO : throw exception when microservice didn't register
+		// TODO: implement checks and exceptions (for example m was not registered)
 	}
 
 	/**
@@ -65,6 +65,7 @@ public class MessageBusImpl implements MessageBus {
 	@Override
 	public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
 		microServiceSubscriptions.get(m).add(type);
+		// TODO: implement checks and exceptions
     }
 
 	/**
@@ -160,5 +161,14 @@ public class MessageBusImpl implements MessageBus {
 	public Message awaitMessage(MicroService m) throws InterruptedException {
 		
 		return null;
+	}
+
+	/**
+	 * *Added by Omri*
+	 * @param m the MicroService to check
+	 * @return if MicroService is currently register to the MessageBus
+	 */
+	private boolean isRegistered(MicroService m){
+		return microServiceMessages.containsKey(m);
 	}
 }
