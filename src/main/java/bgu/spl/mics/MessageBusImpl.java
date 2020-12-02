@@ -163,6 +163,9 @@ public class MessageBusImpl implements MessageBus {
 	public void unregister(MicroService m) {
 		messagesMap.remove(m);
 		subscriptionMap.remove(m);
+		eventReceiveQueues.forEach((eventType,receiveQueues)->{
+			receiveQueues.remove(m);
+		});
 	}
 
 	/**
