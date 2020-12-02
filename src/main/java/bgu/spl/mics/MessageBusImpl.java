@@ -19,6 +19,7 @@ public class MessageBusImpl implements MessageBus {
 	// type of broadcasts and events he is subscribed to
 	private HashMap<MicroService, LinkedList<Message>> microServiceMessages;
 	private HashMap<MicroService,LinkedList<Class<? extends Message>>> microServiceSubscriptions;
+	private HashMap<Event,Future> eventFutureMap;
 
 	/**
 	 * Private constructor
@@ -27,6 +28,7 @@ public class MessageBusImpl implements MessageBus {
 	private MessageBusImpl() { //Singleton pattern
 		microServiceMessages = new HashMap<>();
 		microServiceSubscriptions = new HashMap<>();
+		eventFutureMap = new HashMap<>();
 	}
 
 	public static MessageBusImpl getInstance(){ //Singleton pattern
@@ -77,7 +79,8 @@ public class MessageBusImpl implements MessageBus {
 	 */
 	@Override @SuppressWarnings("unchecked")
 	public <T> void complete(Event<T> e, T result) {
-		
+		eventFutureMap.get(e).resolve(result);
+		// TODO: implement checks and exceptions
 	}
 
 	/**
@@ -103,8 +106,12 @@ public class MessageBusImpl implements MessageBus {
 	 */
 	@Override
 	public <T> Future<T> sendEvent(Event<T> e) {
-		
-        return null;
+		Future<T> eventFuture = new Future<>(); // the future associated with the event
+		eventFutureMap.put(e,eventFuture); // store the association of the future and the event
+		/*
+		TODO: implement the round-robin
+		 */
+        return eventFuture;
 	}
 
 	/**
