@@ -1,7 +1,6 @@
 package bgu.spl.mics;
 
 import bgu.spl.mics.application.messages.AttackEvent;
-import org.graalvm.compiler.asm.sparc.SPARCAssembler;
 
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
