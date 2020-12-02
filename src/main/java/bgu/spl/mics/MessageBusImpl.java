@@ -187,7 +187,7 @@ public class MessageBusImpl implements MessageBus {
 		LinkedList<Message> messageQueue = messagesMap.get(m); // get MicroService messageQueue
 		while(messageQueue.isEmpty()){
 //			wait();
-			Thread.sleep(100);
+			Thread.sleep(100); // TODO: this is temporary!!
 			if(Thread.currentThread().isInterrupted()) {
 				throw new InterruptedException("interrupted while waiting for a message\n" +
 						"\t *                              to became available.");
