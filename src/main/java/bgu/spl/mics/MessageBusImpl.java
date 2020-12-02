@@ -50,7 +50,8 @@ public class MessageBusImpl implements MessageBus {
 	 */
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
-		
+		microServiceSubscriptions.get(m).add(type);
+		//TODO : throw exception when microservice didn't register
 	}
 
 	/**
@@ -61,7 +62,7 @@ public class MessageBusImpl implements MessageBus {
 	 */
 	@Override
 	public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
-		
+		microServiceSubscriptions.get(m).add(type);
     }
 
 	/**
