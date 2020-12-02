@@ -93,6 +93,8 @@ public class MessageBusImpl implements MessageBus {
 			if(subscription.contains(b.getClass()))
 				messagesMap.get(microService).add(b); // add b to microservice message queue
 		});
+		// notify microservices waiting for messages to check again
+		notifyAll();
 	}
 
 	/**
@@ -112,6 +114,8 @@ public class MessageBusImpl implements MessageBus {
 		/*
 		TODO: implement the round-robin
 		 */
+		// notify microservices waiting for messages to check again
+		notifyAll();
         return eventFuture;
 	}
 
@@ -159,8 +163,20 @@ public class MessageBusImpl implements MessageBus {
 	 */
 	@Override
 	public Message awaitMessage(MicroService m) throws InterruptedException {
-		
-		return null;
+		// checks MicroService is registered to this MessageBus
+		if(!isRegistered(m)) throw new IllegalStateException();
+		LinkedList<Message> messageQueue = messagesMap.get(m); // get MicroService messageQueue
+		while(messageQueue.isEmpty()){
+			wait();
+			if(Thread.currentThread().isInterrupted()) {
+				throw new InterruptedException("interrupted while waiting for a message\n" +
+						"\t *                              to became available.");
+			}
+		}
+		//TODO: synchronize?  who should notify?
+
+		// remove message from message queue and return it
+		return messageQueue.remove();
 	}
 
 	/**
