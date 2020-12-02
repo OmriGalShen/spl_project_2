@@ -17,19 +17,22 @@ public class MessageBusImpl implements MessageBus {
 	// for each  microservice who registered should create
 	// A queue of messages and should save which
 	// type of broadcasts and events he is subscribed to
-	HashMap<MicroService, LinkedList<Message>> microServiceMessages;
-	HashMap<MicroService,LinkedList<Class<? extends Message>>> microServiceSubscriptions;
+	private HashMap<MicroService, LinkedList<Message>> microServiceMessages;
+	private HashMap<MicroService,LinkedList<Class<? extends Message>>> microServiceSubscriptions;
 
 	/**
 	 * Private constructor
 	 * Added*
 	 */
 	private MessageBusImpl() { //Singleton pattern
-
+		microServiceMessages = new HashMap<>();
+		microServiceSubscriptions = new HashMap<>();
 	}
 
 	public static MessageBusImpl getInstance(){ //Singleton pattern
 		if(instance == null){
+			//only on creation of first instance synchronize:
+			// this is to make sure only one thread creates the first instance
 			synchronized (MessageBusImpl.class){
 				if(instance==null)
 					instance = new MessageBusImpl();
