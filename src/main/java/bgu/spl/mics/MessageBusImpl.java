@@ -16,6 +16,7 @@ public class MessageBusImpl implements MessageBus {
 	private HashMap<MicroService, LinkedList<Message>> messagesMap;
 	private HashMap<MicroService,LinkedList<Class<? extends Message>>> subscriptionMap;
 	private HashMap<Event,Future> eventFutureMap;
+	private HashMap<Class<? extends Message>, LinkedList<MicroService>> eventReceiveQueues;
 
 	/**
 	 * Private constructor
@@ -25,6 +26,7 @@ public class MessageBusImpl implements MessageBus {
 		messagesMap = new HashMap<>();
 		subscriptionMap = new HashMap<>();
 		eventFutureMap = new HashMap<>();
+		eventReceiveQueues = new HashMap<>();
 	}
 
 	public static MessageBusImpl getInstance(){ //Singleton pattern
@@ -48,7 +50,19 @@ public class MessageBusImpl implements MessageBus {
 	 */
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
-		subscriptionMap.get(m).add(type);
+		if(isRegistered(m)) {
+			if (subscriptionMap.get(m).contains(type))
+				return; //MicroService was already subscribed
+			subscriptionMap.get(m).add(type); // add subscription
+			if (eventReceiveQueues.containsKey(type)) { // add to event map
+				eventReceiveQueues.get(type).add(m);
+			}
+			else{ // new type of event
+				// create new queue of microservices subscribed to this event type
+				eventReceiveQueues.put(type,new LinkedList<>());
+				eventReceiveQueues.get(type).add(m); // add the MicroService to the queue
+			}
+		}
 		// TODO: implement checks and exceptions (for example m was not registered)
 	}
 
@@ -60,7 +74,11 @@ public class MessageBusImpl implements MessageBus {
 	 */
 	@Override
 	public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
-		subscriptionMap.get(m).add(type);
+		if(isRegistered(m)) {
+			if (subscriptionMap.get(m).contains(type))
+				return;//MicroService was already subscribed
+			subscriptionMap.get(m).add(type);
+		}
 		// TODO: implement checks and exceptions
     }
 
@@ -94,7 +112,7 @@ public class MessageBusImpl implements MessageBus {
 				messagesMap.get(microService).add(b); // add b to microservice message queue
 		});
 		// notify microservices waiting for messages to check again
-		notifyAll();
+//		notifyAll();
 	}
 
 	/**
@@ -111,11 +129,12 @@ public class MessageBusImpl implements MessageBus {
 	public <T> Future<T> sendEvent(Event<T> e) {
 		Future<T> eventFuture = new Future<>(); // the future associated with the event
 		eventFutureMap.put(e,eventFuture); // store the association of the future and the event
-		/*
-		TODO: implement the round-robin
-		 */
+		LinkedList<MicroService> receivingQueue = eventReceiveQueues.get(e.getClass());
+		MicroService receivingMicro = receivingQueue.remove(); // remove the first micro in receiving queue
+		receivingQueue.add(receivingMicro); // add to the back of the receiving queue
+		messagesMap.get(receivingMicro).add(e); // add message to micro
 		// notify microservices waiting for messages to check again
-		notifyAll();
+//		notifyAll();
         return eventFuture;
 	}
 
@@ -167,7 +186,8 @@ public class MessageBusImpl implements MessageBus {
 		if(!isRegistered(m)) throw new IllegalStateException();
 		LinkedList<Message> messageQueue = messagesMap.get(m); // get MicroService messageQueue
 		while(messageQueue.isEmpty()){
-			wait();
+//			wait();
+			Thread.sleep(100);
 			if(Thread.currentThread().isInterrupted()) {
 				throw new InterruptedException("interrupted while waiting for a message\n" +
 						"\t *                              to became available.");
