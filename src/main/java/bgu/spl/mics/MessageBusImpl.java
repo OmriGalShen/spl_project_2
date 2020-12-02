@@ -1,12 +1,8 @@
 package bgu.spl.mics;
-import bgu.spl.mics.application.services.C3POMicroservice;
 
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Vector;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
+
 /**
  * The {@link MessageBusImpl class is the implementation of the MessageBus interface.
  * Write your implementation here!
@@ -17,8 +13,8 @@ public class MessageBusImpl implements MessageBus {
 	// for each  microservice who registered should create
 	// A queue of messages and should save which
 	// type of broadcasts and events he is subscribed to
-	private HashMap<MicroService, LinkedList<Message>> microServiceMessages;
-	private HashMap<MicroService,LinkedList<Class<? extends Message>>> microServiceSubscriptions;
+	private HashMap<MicroService, LinkedList<Message>> messagesMap;
+	private HashMap<MicroService,LinkedList<Class<? extends Message>>> subscriptionMap;
 	private HashMap<Event,Future> eventFutureMap;
 
 	/**
@@ -26,8 +22,8 @@ public class MessageBusImpl implements MessageBus {
 	 * Added*
 	 */
 	private MessageBusImpl() { //Singleton pattern
-		microServiceMessages = new HashMap<>();
-		microServiceSubscriptions = new HashMap<>();
+		messagesMap = new HashMap<>();
+		subscriptionMap = new HashMap<>();
 		eventFutureMap = new HashMap<>();
 	}
 
@@ -52,7 +48,7 @@ public class MessageBusImpl implements MessageBus {
 	 */
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
-		microServiceSubscriptions.get(m).add(type);
+		subscriptionMap.get(m).add(type);
 		// TODO: implement checks and exceptions (for example m was not registered)
 	}
 
@@ -64,7 +60,7 @@ public class MessageBusImpl implements MessageBus {
 	 */
 	@Override
 	public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
-		microServiceSubscriptions.get(m).add(type);
+		subscriptionMap.get(m).add(type);
 		// TODO: implement checks and exceptions
     }
 
@@ -92,7 +88,11 @@ public class MessageBusImpl implements MessageBus {
 	 */
 	@Override
 	public void sendBroadcast(Broadcast b) {
-		
+		subscriptionMap.forEach((microService,subscription)-> {
+			//check if microservice is subscribe this type of broadcast
+			if(subscription.contains(b.getClass()))
+				messagesMap.get(microService).add(b); // add b to microservice message queue
+		});
 	}
 
 	/**
@@ -124,8 +124,8 @@ public class MessageBusImpl implements MessageBus {
 	public void register(MicroService m) {
 		LinkedList<Message> messagesQueue = new LinkedList<Message>();
 		LinkedList<Class<? extends Message>> messageTypeQueue = new LinkedList<Class<? extends Message>>();
-		microServiceMessages.put(m,messagesQueue);
-		microServiceSubscriptions.put(m,messageTypeQueue);
+		messagesMap.put(m,messagesQueue);
+		subscriptionMap.put(m,messageTypeQueue);
 	}
 
 	/**
@@ -138,8 +138,8 @@ public class MessageBusImpl implements MessageBus {
 	 */
 	@Override
 	public void unregister(MicroService m) {
-		microServiceMessages.remove(m);
-		microServiceSubscriptions.remove(m);
+		messagesMap.remove(m);
+		subscriptionMap.remove(m);
 	}
 
 	/**
@@ -169,6 +169,6 @@ public class MessageBusImpl implements MessageBus {
 	 * @return if MicroService is currently register to the MessageBus
 	 */
 	private boolean isRegistered(MicroService m){
-		return microServiceMessages.containsKey(m);
+		return messagesMap.containsKey(m);
 	}
 }
