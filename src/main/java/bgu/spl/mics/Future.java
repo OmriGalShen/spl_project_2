@@ -64,12 +64,18 @@ public class Future<T> {
 	public T get(long timeout, TimeUnit unit) {
 		if(isDone)
 			return this.result;
-		try {
-			Thread.sleep(TimeUnit.MILLISECONDS.convert(timeout,unit));
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		long timeoutMillis = unit.toMillis(timeout);
+		boolean finished = false;
+		long currentTime=0L;
+		long deadline = System.currentTimeMillis()+timeoutMillis;
+		while (!finished){
+			if(this.isDone)
+				return this.result;
+			currentTime = deadline-System.currentTimeMillis();
+			if(currentTime <= 0) //timeout passed
+				finished=true;
 		}
-		return isDone? result : null;
+		return null;
 	}
 
 }
