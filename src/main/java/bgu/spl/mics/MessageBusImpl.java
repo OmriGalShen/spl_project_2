@@ -2,6 +2,7 @@ package bgu.spl.mics;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The {@link MessageBusImpl class is the implementation of the MessageBus interface.
@@ -13,20 +14,20 @@ public class MessageBusImpl implements MessageBus {
 	// for each  microservice who registered should create
 	// A queue of messages and should save which
 	// type of broadcasts and events he is subscribed to
-	private HashMap<MicroService, LinkedList<Message>> messagesMap;
-	private HashMap<MicroService,LinkedList<Class<? extends Message>>> subscriptionMap;
-	private HashMap<Event,Future> eventFutureMap;
-	private HashMap<Class<? extends Message>, LinkedList<MicroService>> eventReceiveQueues;
+	private ConcurrentHashMap<MicroService, LinkedList<Message>> messagesMap;
+	private ConcurrentHashMap<MicroService,LinkedList<Class<? extends Message>>> subscriptionMap;
+	private ConcurrentHashMap<Event,Future> eventFutureMap;
+	private ConcurrentHashMap<Class<? extends Message>, LinkedList<MicroService>> eventReceiveQueues;
 
 	/**
 	 * Private constructor
 	 * Added*
 	 */
 	private MessageBusImpl() { //Singleton pattern
-		messagesMap = new HashMap<>();
-		subscriptionMap = new HashMap<>();
-		eventFutureMap = new HashMap<>();
-		eventReceiveQueues = new HashMap<>();
+		messagesMap = new ConcurrentHashMap<>();
+		subscriptionMap = new ConcurrentHashMap<>();
+		eventFutureMap = new ConcurrentHashMap<>();
+		eventReceiveQueues = new ConcurrentHashMap<>();
 	}
 
 	public static MessageBusImpl getInstance(){ //Singleton pattern
