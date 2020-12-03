@@ -1,5 +1,8 @@
 package bgu.spl.mics;
 
+import bgu.spl.mics.application.messages.AttackEvent;
+
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -21,14 +24,20 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  */
 public abstract class MicroService implements Runnable { 
-    
+    private final String name;
+    private boolean terminate;
+    private final MessageBusImpl messageBus;
+    private final HashMap<Class<? extends Message>,Callback> callbackMap;
 
     /**
      * @param name the micro-service name (used mainly for debugging purposes -
      *             does not have to be unique)
      */
     public MicroService(String name) {
-    	
+    	this.name = name;
+    	this.terminate = false;
+        this.messageBus = MessageBusImpl.getInstance();
+        this.callbackMap = new HashMap<>();
     }
 
     /**
@@ -53,7 +62,8 @@ public abstract class MicroService implements Runnable {
      *                 queue.
      */
     protected final <T, E extends Event<T>> void subscribeEvent(Class<E> type, Callback<E> callback) {
-    	
+        messageBus.subscribeEvent(type,this);
+        callbackMap.put(type,callback);
     }
 
     /**
@@ -77,7 +87,8 @@ public abstract class MicroService implements Runnable {
      *                 queue.
      */
     protected final <B extends Broadcast> void subscribeBroadcast(Class<B> type, Callback<B> callback) {
-    	
+    	messageBus.subscribeBroadcast(type,this);
+        callbackMap.put(type,callback);
     }
 
     /**
@@ -93,8 +104,7 @@ public abstract class MicroService implements Runnable {
      * 	       			null in case no micro-service has subscribed to {@code e.getClass()}.
      */
     protected final <T> Future<T> sendEvent(Event<T> e) {
-    	
-        return null; 
+        return this.messageBus.sendEvent(e);
     }
 
     /**
@@ -104,7 +114,7 @@ public abstract class MicroService implements Runnable {
      * @param b The broadcast message to send
      */
     protected final void sendBroadcast(Broadcast b) {
-    	
+        this.messageBus.sendBroadcast(b);
     }
 
     /**
@@ -118,7 +128,7 @@ public abstract class MicroService implements Runnable {
      *               {@code e}.
      */
     protected final <T> void complete(Event<T> e, T result) {
-    	
+    	this.messageBus.complete(e,result);
     }
 
     /**
@@ -131,7 +141,7 @@ public abstract class MicroService implements Runnable {
      * message.
      */
     protected final void terminate() {
-    	
+    	this.terminate = true;
     }
 
     /**
@@ -139,7 +149,7 @@ public abstract class MicroService implements Runnable {
      *         construction time and is used mainly for debugging purposes.
      */
     public final String getName() {
-        return null;
+        return this.name;
     }
 
     /**
@@ -148,7 +158,29 @@ public abstract class MicroService implements Runnable {
      */
     @Override
     public final void run() {
-    	
+    	this.messageBus.register(this); //register to MessageBus to receive messages
+        this.initialize(); // e.g derived subscribed to events and broadcasts
+        while (!this.terminate){ // loop until terminate() was called
+            try {
+                Message m = this.messageBus.awaitMessage(this); //Blocking!!!
+                if(m != null) {
+                    // get appropriate callback to this type of message
+                    Callback callback = this.callbackMap.get(m.getClass());
+                    callback.call(m); //run appropriate callback function
+                }
+                else
+                    throw new NullPointerException();
+            } catch (InterruptedException e) {
+                System.out.println("Microservice: "+this.name+" was Interrupted");
+                e.printStackTrace();
+            }
+            catch (NullPointerException e){
+                System.out.println("Await message returned null");
+                e.printStackTrace();
+            }
+        }
+        // MicroService was terminated so unregister to MessageBus insure cleanup
+        this.messageBus.unregister(this);
     }
 
 }
