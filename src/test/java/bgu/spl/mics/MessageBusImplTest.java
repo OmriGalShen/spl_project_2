@@ -24,7 +24,7 @@ class MessageBusImplTest {
 
     @Test
     void testComplete() {
-        AttackEvent testEvent = new AttackEvent(new Attack(new ArrayList<>(),100)); //example of event
+        AttackEvent testEvent = new AttackEvent(); //example of event
         C3POMicroservice testC3PO = new C3POMicroservice(); //example of Microservice
         Future<Boolean> c3p0Future = testC3PO.sendEvent(testEvent);
         if(c3p0Future==null)fail();
@@ -67,7 +67,7 @@ class MessageBusImplTest {
      */
     @Test
     void testEvent() {
-        AttackEvent testEvent = new AttackEvent(new Attack(new ArrayList<>(),100)); //example of event
+        AttackEvent testEvent = new AttackEvent(); //example of event
         C3POMicroservice testC3PO = new C3POMicroservice(); //example of Microservice
         R2D2Microservice testR2D2 = new R2D2Microservice(100);//example of Microservice
         testMessageBus.register(testC3PO);
