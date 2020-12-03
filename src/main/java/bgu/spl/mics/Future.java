@@ -62,8 +62,14 @@ public class Future<T> {
      *         elapsed, return null.
      */
 	public T get(long timeout, TimeUnit unit) {
-		
-        return this.result; // TODO: need actual implementation
+		if(isDone)
+			return this.result;
+		try {
+			Thread.sleep(timeout); //TODO: units?
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return isDone? result : null;
 	}
 
 }
