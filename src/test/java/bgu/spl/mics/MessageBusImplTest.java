@@ -3,11 +3,14 @@ package bgu.spl.mics;
 import bgu.spl.mics.application.messages.AttackEvent;
 import bgu.spl.mics.application.messages.BombDestroyerEvent;
 import bgu.spl.mics.application.messages.TerminateBroadcast;
+import bgu.spl.mics.application.passiveObjects.Attack;
 import bgu.spl.mics.application.services.C3POMicroservice;
 import bgu.spl.mics.application.services.R2D2Microservice;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,7 +24,7 @@ class MessageBusImplTest {
 
     @Test
     void testComplete() {
-        AttackEvent testEvent = new AttackEvent(); //example of event
+        AttackEvent testEvent = new AttackEvent(new Attack(new ArrayList<>(),100)); //example of event
         C3POMicroservice testC3PO = new C3POMicroservice(); //example of Microservice
         Future<Boolean> c3p0Future = testC3PO.sendEvent(testEvent);
         if(c3p0Future==null)fail();
@@ -64,7 +67,7 @@ class MessageBusImplTest {
      */
     @Test
     void testEvent() {
-        AttackEvent testEvent = new AttackEvent(); //example of event
+        AttackEvent testEvent = new AttackEvent(new Attack(new ArrayList<>(),100)); //example of event
         C3POMicroservice testC3PO = new C3POMicroservice(); //example of Microservice
         R2D2Microservice testR2D2 = new R2D2Microservice(100);//example of Microservice
         testMessageBus.register(testC3PO);
