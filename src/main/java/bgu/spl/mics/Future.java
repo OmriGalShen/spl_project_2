@@ -65,7 +65,7 @@ public class Future<T> {
 		if(isDone)
 			return this.result;
 		try {
-			Thread.sleep(timeout); //TODO: units?
+			Thread.sleep(TimeUnit.MILLISECONDS.convert(timeout,unit));
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
