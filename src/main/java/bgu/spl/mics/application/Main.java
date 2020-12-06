@@ -37,7 +37,6 @@ public class Main {
 		}
 
 
-
 		Diary recordDiary = Diary.getInstance();
 		try {
 			diaryToJson(outputFilePath,recordDiary);
@@ -46,14 +45,14 @@ public class Main {
 		}
 
 	}
-	public static Input getInputFromJson(String filePath) throws IOException {
+	private static Input getInputFromJson(String filePath) throws IOException {
 		Gson gson = new Gson();
 		try (Reader reader = new FileReader(filePath)) {
 			return gson.fromJson(reader, Input.class);
 		}
 	}
 
-	public static void diaryToJson(String filePath, Diary recordDiary) throws IOException {
+	private static void diaryToJson(String filePath, Diary recordDiary) throws IOException {
 		Gson gson = new Gson();
 		try (Writer writer = new FileWriter(filePath)) {
 			gson.toJson(recordDiary, writer);
