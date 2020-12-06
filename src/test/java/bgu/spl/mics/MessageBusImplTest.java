@@ -60,6 +60,8 @@ class MessageBusImplTest {
         catch (Exception e){
             fail("awaitMessage thrown Exception");
         }
+        testMessageBus.unregister(testC3PO);
+        testMessageBus.unregister(testR2D2);
     }
 
     /**
@@ -88,6 +90,8 @@ class MessageBusImplTest {
         catch (Exception e){
             fail("awaitMessage thrown Exception");
         }
+        testMessageBus.unregister(testC3PO);
+        testMessageBus.unregister(testR2D2);
     }
 
 
@@ -128,5 +132,7 @@ class MessageBusImplTest {
         catch (IllegalStateException e){
             fail("awaitMessage thrown IllegalStateException");
         }
+        testMessageBus.unregister(testC3PO);
+        testMessageBus.unregister(testR2D2);
     }
 }

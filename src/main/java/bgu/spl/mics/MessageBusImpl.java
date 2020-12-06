@@ -11,12 +11,13 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class MessageBusImpl implements MessageBus {
 	private static MessageBusImpl instance;
-	// for each  microservice who registered should create
-	// A queue of messages and should save which
-	// type of broadcasts and events he is subscribed to
+	// for each MicroService store message queue
 	private ConcurrentHashMap<MicroService, LinkedList<Message>> messagesMap;
+	// for each MicroService store subscriptions queue
 	private ConcurrentHashMap<MicroService,LinkedList<Class<? extends Message>>> subscriptionMap;
+	// store associations of events and Future objects
 	private ConcurrentHashMap<Event,Future> eventFutureMap;
+	// for each type of event store receiving microservices
 	private ConcurrentHashMap<Class<? extends Message>, LinkedList<MicroService>> eventReceiveQueues;
 
 	/**
@@ -55,7 +56,7 @@ public class MessageBusImpl implements MessageBus {
 			if (subscriptionMap.get(m).contains(type))
 				return; //MicroService was already subscribed
 			subscriptionMap.get(m).add(type); // add subscription
-			if (eventReceiveQueues.containsKey(type)) { // add to event map
+			if (eventReceiveQueues.containsKey(type)) { // add to appropriate event map
 				eventReceiveQueues.get(type).add(m);
 			}
 			else{ // new type of event
@@ -64,7 +65,6 @@ public class MessageBusImpl implements MessageBus {
 				eventReceiveQueues.get(type).add(m); // add the MicroService to the queue
 			}
 		}
-		// TODO: implement checks and exceptions (for example m was not registered)
 	}
 
 	/**
@@ -80,7 +80,6 @@ public class MessageBusImpl implements MessageBus {
 				return;//MicroService was already subscribed
 			subscriptionMap.get(m).add(type);
 		}
-		// TODO: implement checks and exceptions
     }
 
 	/**
@@ -95,8 +94,10 @@ public class MessageBusImpl implements MessageBus {
 	 */
 	@Override @SuppressWarnings("unchecked")
 	public <T> void complete(Event<T> e, T result) {
-		eventFutureMap.get(e).resolve(result);
-		// TODO: implement checks and exceptions
+		if(eventFutureMap.containsKey(e)&&eventFutureMap.get(e)!=null)
+			eventFutureMap.get(e).resolve(result);
+		else
+			throw new IllegalStateException("Event wasn't registered or Future was null");
 	}
 
 	/**
@@ -109,11 +110,16 @@ public class MessageBusImpl implements MessageBus {
 	public void sendBroadcast(Broadcast b) {
 		subscriptionMap.forEach((microService,subscription)-> {
 			//check if microservice is subscribe this type of broadcast
-			if(subscription.contains(b.getClass()))
+			if(subscription.contains(b.getClass())){
+				// In case microService is waiting for this broadcast in awaitMessage()
+				if(messagesMap.get(microService).isEmpty()){
+					synchronized (this){
+						notifyAll();// make sure receivingMicro is out of wait loop in awaitMessage()
+					}
+				}
 				messagesMap.get(microService).add(b); // add b to microservice message queue
+			}
 		});
-		// notify microservices waiting for messages to check again
-//		notifyAll();
 	}
 
 	/**
@@ -130,12 +136,23 @@ public class MessageBusImpl implements MessageBus {
 	public <T> Future<T> sendEvent(Event<T> e) {
 		Future<T> eventFuture = new Future<>(); // the future associated with the event
 		eventFutureMap.put(e,eventFuture); // store the association of the future and the event
+
+		// no microservice to receive event
+		if(!eventReceiveQueues.containsKey(e.getClass())||
+				eventReceiveQueues.get(e.getClass()).isEmpty()){
+			return eventFuture;
+		}
+		// queue of MicroService who registered to this type of event
 		LinkedList<MicroService> receivingQueue = eventReceiveQueues.get(e.getClass());
 		MicroService receivingMicro = receivingQueue.remove(); // remove the first micro in receiving queue
 		receivingQueue.add(receivingMicro); // add to the back of the receiving queue
 		messagesMap.get(receivingMicro).add(e); // add message to micro
-		// notify microservices waiting for messages to check again
-//		notifyAll();
+		// In case receivingMicro is waiting for this broadcast in awaitMessage()
+		if(messagesMap.get(receivingMicro).isEmpty()){
+			synchronized (this){
+				notifyAll(); // make sure receivingMicro is out of wait loop in awaitMessage()
+			}
+		}
         return eventFuture;
 	}
 
@@ -190,15 +207,16 @@ public class MessageBusImpl implements MessageBus {
 		if(!isRegistered(m)) throw new IllegalStateException();
 		LinkedList<Message> messageQueue = messagesMap.get(m); // get MicroService messageQueue
 		while(messageQueue.isEmpty()){
-//			wait();
-			Thread.sleep(100); // TODO: this is temporary!!
-			if(Thread.currentThread().isInterrupted()) {
-				throw new InterruptedException("interrupted while waiting for a message\n" +
-						"\t *                              to became available.");
+			synchronized (this){
+				try {
+					wait();
+				}
+				catch (InterruptedException e){
+					System.out.println("interrupted while waiting for a message");
+					e.printStackTrace();
+				}
 			}
 		}
-		//TODO: synchronize?  who should notify?
-
 		// remove message from message queue and return it
 		return messageQueue.remove();
 	}

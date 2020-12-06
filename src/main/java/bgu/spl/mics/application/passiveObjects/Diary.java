@@ -10,11 +10,21 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Diary {
     private static Diary instance;
-    private int totalAttacks;
+    private AtomicInteger totalAttacks;
     private long HanSoloFinish, C3POFinish, R2D2Deactivate, LeiaTerminate,
             HanSoloTerminate,C3POTerminate,R2D2Terminate, LandoTerminate;
 
-    private Diary(){}
+    private Diary(){
+        totalAttacks = new AtomicInteger(0);
+        HanSoloFinish = 0;
+        C3POFinish= 0;
+        R2D2Deactivate = 0;
+        LeiaTerminate=0;
+        HanSoloTerminate = 0;
+        C3POTerminate =0;
+        R2D2Terminate=0;
+        LandoTerminate=0;
+    }
 
     public static Diary getInstance() {
         if(instance==null)
@@ -22,11 +32,11 @@ public class Diary {
         return instance;
     }
 
-    public int getTotalAttacks() {
+    public AtomicInteger getTotalAttacks() {
         return totalAttacks;
     }
 
-    public void setTotalAttacks(int totalAttacks) {
+    public void setTotalAttacks(AtomicInteger totalAttacks) {
         this.totalAttacks = totalAttacks;
     }
 
