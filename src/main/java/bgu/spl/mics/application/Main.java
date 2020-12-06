@@ -38,8 +38,8 @@ public class Main {
 		// <----------input ---------->
 
 		// <--------main program ---------->
-//		if(input!=null)
-//			starWars(input);
+		if(input!=null)
+			starWars(input);
 		// <--------main program ---------->
 
 		// <----------output ---------->
@@ -68,22 +68,28 @@ public class Main {
 
 	private static void starWars(Input input)
 	{
-		Thread leiaThread = new Thread(new LeiaMicroservice(input.getAttacks()));
-		Thread c3p0Thread = new Thread(new C3POMicroservice());
-		Thread hansThread = new Thread(new HanSoloMicroservice());
-		Thread landoThread = new Thread(new LandoMicroservice(input.getLando()));
-		Thread r2d2Thread = new Thread(new R2D2Microservice(input.getR2D2()));
-		leiaThread.start();
-		c3p0Thread.start();
-		hansThread.start();
-		landoThread.start();
-		r2d2Thread.start();
+		MessageBusImpl messageBus = MessageBusImpl.getInstance();
+		MicroService[] microArray = new MicroService[5];
+		Thread[] threads = new Thread[5];
+
+		microArray[0] = new LeiaMicroservice(input.getAttacks());
+		microArray[1] = new C3POMicroservice();
+		microArray[2] = new HanSoloMicroservice();
+		microArray[3] = new LandoMicroservice(input.getLando());
+		microArray[4] = new R2D2Microservice(input.getR2D2());
+		for (int i = 0; i < microArray.length; i++) {
+			messageBus.register(microArray[i]);
+		}
+		for (int i = 0; i < threads.length ; i++) {
+			threads[i] = new Thread(microArray[i]);
+		}
+		for (Thread thread : threads) {
+			thread.start();
+		}
 		try{
-			leiaThread.join();
-			c3p0Thread.join();
-			hansThread.join();
-			landoThread.join();
-			r2d2Thread.join();
+			for (Thread thread : threads) {
+				thread.join();
+			}
 		}
 		catch (InterruptedException e){}
 	}
