@@ -33,13 +33,10 @@ public class LeiaMicroservice extends MicroService {
 
     @Override
     protected void initialize() {
+        MessageBusImpl messageBus = MessageBusImpl.getInstance();
         for (int i = 0; i <attacks.length ; i++) {
             attackEvents[i] = new AttackEvent(attacks[i]);
         }
-    }
-
-    public void sendAttacks(){
-        MessageBusImpl messageBus = MessageBusImpl.getInstance();
         for (int i = 0; i < attackEvents.length; i++) {
             futures[i] = messageBus.sendEvent(attackEvents[i]);
         }
