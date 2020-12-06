@@ -71,6 +71,8 @@ public class Main {
 		MessageBusImpl messageBus = MessageBusImpl.getInstance();
 		MicroService[] microArray = new MicroService[5];
 		Thread[] threads = new Thread[5];
+		Ewoks ewoks = Ewoks.getInstance();
+		ewoks.initialize(input.getEwoks());
 
 		microArray[0] = new LeiaMicroservice(input.getAttacks());
 		microArray[1] = new C3POMicroservice();
