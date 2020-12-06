@@ -56,7 +56,7 @@ public class MessageBusImpl implements MessageBus {
 			if (subscriptionMap.get(m).contains(type))
 				return; //MicroService was already subscribed
 			subscriptionMap.get(m).add(type); // add subscription
-			if (eventReceiveQueues.containsKey(type)) { // add to event map
+			if (eventReceiveQueues.containsKey(type)) { // add to appropriate event map
 				eventReceiveQueues.get(type).add(m);
 			}
 			else{ // new type of event
@@ -65,7 +65,6 @@ public class MessageBusImpl implements MessageBus {
 				eventReceiveQueues.get(type).add(m); // add the MicroService to the queue
 			}
 		}
-		// TODO: implement checks and exceptions (for example m was not registered)
 	}
 
 	/**
@@ -81,7 +80,6 @@ public class MessageBusImpl implements MessageBus {
 				return;//MicroService was already subscribed
 			subscriptionMap.get(m).add(type);
 		}
-		// TODO: implement checks and exceptions
     }
 
 	/**
