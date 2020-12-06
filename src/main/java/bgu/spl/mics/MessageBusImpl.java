@@ -163,6 +163,8 @@ public class MessageBusImpl implements MessageBus {
 	 */
 	@Override
 	public void register(MicroService m) {
+		if(isRegistered(m))
+			return;//already registered
 		LinkedList<Message> messagesQueue = new LinkedList<Message>();
 		LinkedList<Class<? extends Message>> messageTypeQueue = new LinkedList<Class<? extends Message>>();
 		messagesMap.put(m,messagesQueue);
