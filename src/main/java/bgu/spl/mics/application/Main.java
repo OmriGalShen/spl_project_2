@@ -77,9 +77,7 @@ public class Main {
 		microArray[2] = new HanSoloMicroservice();
 		microArray[3] = new LandoMicroservice(input.getLando());
 		microArray[4] = new R2D2Microservice(input.getR2D2());
-		for (int i = 0; i < microArray.length; i++) {
-			messageBus.register(microArray[i]);
-		}
+
 		for (int i = 0; i < threads.length ; i++) {
 			threads[i] = new Thread(microArray[i]);
 		}
