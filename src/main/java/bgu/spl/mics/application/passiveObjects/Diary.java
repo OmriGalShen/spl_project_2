@@ -1,5 +1,7 @@
 package bgu.spl.mics.application.passiveObjects;
 
+import bgu.spl.mics.MessageBusImpl;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -26,9 +28,15 @@ public class Diary {
         LandoTerminate=0;
     }
 
-    public static Diary getInstance() {
-        if(instance==null)
-            return new Diary();
+    public static Diary getInstance(){ //Singleton pattern
+        if(instance == null){
+            //only on creation of first instance synchronize:
+            // this is to make sure only one thread creates the first instance
+            synchronized (Diary.class){
+                if(instance==null)
+                    instance = new Diary();
+            }
+        }
         return instance;
     }
 
