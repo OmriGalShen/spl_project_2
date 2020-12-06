@@ -14,7 +14,17 @@ public class Diary {
     private long HanSoloFinish, C3POFinish, R2D2Deactivate, LeiaTerminate,
             HanSoloTerminate,C3POTerminate,R2D2Terminate, LandoTerminate;
 
-    private Diary(){}
+    private Diary(){
+        totalAttacks = new AtomicInteger(0);
+        HanSoloFinish = 0;
+        C3POFinish= 0;
+        R2D2Deactivate = 0;
+        LeiaTerminate=0;
+        HanSoloTerminate = 0;
+        C3POTerminate =0;
+        R2D2Terminate=0;
+        LandoTerminate=0;
+    }
 
     public static Diary getInstance() {
         if(instance==null)
