@@ -25,6 +25,7 @@ public class LeiaMicroservice extends MicroService {
     public LeiaMicroservice(Attack[] attacks) {
         super("Leia");
         this.futures = new Future[attacks.length];
+        attackEvents = new AttackEvent[attacks.length];
         for (int i = 0; i <attacks.length ; i++) {
             attackEvents[i] = new AttackEvent(attacks[i]);
         }
