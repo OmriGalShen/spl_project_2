@@ -9,6 +9,7 @@ import bgu.spl.mics.application.messages.DeactivationEvent;
 import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.passiveObjects.Attack;
 import bgu.spl.mics.application.passiveObjects.Diary;
+import bgu.spl.mics.application.passiveObjects.Ewoks;
 
 /**
  * LeiaMicroservices Initialized with Attack objects, and sends them as  {@link AttackEvent}.
@@ -34,8 +35,23 @@ public class LeiaMicroservice extends MicroService {
     @Override
     protected void initialize() {
         MessageBusImpl messageBus = MessageBusImpl.getInstance();
+        // --- send attacks ---
         for (int i = 0; i < attackEvents.length; i++) {
             futures[i] = messageBus.sendEvent(attackEvents[i]);
         }
+        // -- wait for attacks to finish --
+        for(Future future : futures){
+            while (!future.isDone()){
+                synchronized (Ewoks.getInstance()){
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        // -- send DeactivationEvent to R2D2 --
+        messageBus.sendEvent(new DeactivationEvent());
     }
 }
