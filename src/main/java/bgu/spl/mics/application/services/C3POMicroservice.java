@@ -3,6 +3,7 @@ import java.util.List;
 
 import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.MicroService;
+import bgu.spl.mics.application.Main;
 import bgu.spl.mics.application.messages.AttackEvent;
 import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.passiveObjects.Diary;
@@ -44,6 +45,7 @@ public class C3POMicroservice extends MicroService {
             }
             System.out.println("C3PO: I finished this attack!");
             Diary.getInstance().setC3POFinish(System.currentTimeMillis());
+            Diary.getInstance().incrementTotalAttacks();
             MessageBusImpl.getInstance().complete(c,true);
         });
         // -- subscribe to TerminateBroadcast and terminate accordingly --
