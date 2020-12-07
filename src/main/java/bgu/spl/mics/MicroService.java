@@ -157,10 +157,12 @@ public abstract class MicroService implements Runnable {
     public final void run() {
     	this.messageBus.register(this); //register to MessageBus to receive messages
         this.initialize(); // e.g derived subscribed to events and broadcasts
+        System.out.println("Finished initialize "+this.name);
         while (!this.terminate){ // loop until terminate() was called
             try {
                 Message m = this.messageBus.awaitMessage(this); //Blocking!!!
                 if(m != null) {
+                    System.out.println(this.name+" got a message");
                     // get appropriate callback to this type of message
                     Callback callback = this.callbackMap.get(m.getClass());
                     callback.call(m); //run appropriate callback function
