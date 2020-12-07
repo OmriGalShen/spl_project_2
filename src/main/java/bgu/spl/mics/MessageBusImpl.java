@@ -3,6 +3,7 @@ package bgu.spl.mics;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * The {@link MessageBusImpl class is the implementation of the MessageBus interface.
@@ -18,7 +19,7 @@ public class MessageBusImpl implements MessageBus {
 	// store associations of events and Future objects
 	private ConcurrentHashMap<Event,Future> eventFutureMap;
 	// for each type of event store receiving microservices
-	private ConcurrentHashMap<Class<? extends Message>, LinkedList<MicroService>> eventReceiveQueues;
+	private ConcurrentHashMap<Class<? extends Message>, ConcurrentLinkedQueue<MicroService>> eventReceiveQueues;
 
 	/**
 	 * Private constructor
@@ -61,7 +62,7 @@ public class MessageBusImpl implements MessageBus {
 			}
 			else{ // new type of event
 				// create new queue of microservices subscribed to this event type
-				eventReceiveQueues.put(type,new LinkedList<>());
+				eventReceiveQueues.put(type,new ConcurrentLinkedQueue<>());
 				eventReceiveQueues.get(type).add(m); // add the MicroService to the queue
 			}
 		}
@@ -149,7 +150,7 @@ public class MessageBusImpl implements MessageBus {
 			return eventFuture;
 		}
 		// queue of MicroService who registered to this type of event
-		LinkedList<MicroService> receivingQueue = eventReceiveQueues.get(e.getClass());
+		ConcurrentLinkedQueue<MicroService> receivingQueue = eventReceiveQueues.get(e.getClass());
 		MicroService receivingMicro = receivingQueue.remove(); // remove the first micro in receiving queue
 		receivingQueue.add(receivingMicro); // add to the back of the receiving queue
 		messagesMap.get(receivingMicro).add(e); // add message to micro
