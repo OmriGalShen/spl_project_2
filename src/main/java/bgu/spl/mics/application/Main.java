@@ -92,6 +92,7 @@ public class Main {
 			}
 		}
 		catch (InterruptedException e){}
+		System.out.println("STAR WARS - A NEW HOPE FOR A GOOD SPL PROJECT!");
 	}
 }
 
