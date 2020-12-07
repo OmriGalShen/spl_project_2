@@ -81,7 +81,6 @@ public class Main {
 	 */
 	private static void starWars(Input input)
 	{
-		MessageBusImpl messageBus = MessageBusImpl.getInstance();
 		MicroService[] microArray = new MicroService[5];
 		Thread[] threads = new Thread[5];
 		Ewoks ewoks = Ewoks.getInstance();
