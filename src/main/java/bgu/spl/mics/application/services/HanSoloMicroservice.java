@@ -46,7 +46,7 @@ public class HanSoloMicroservice extends MicroService {
             System.out.println("Han: I finished this attack!");
             Diary.getInstance().setHanSoloFinish(System.currentTimeMillis());
             Diary.getInstance().incrementTotalAttacks();
-            MessageBusImpl.getInstance().complete(c,true);
+            this.complete(c,true);
         });
         // -- subscribe to TerminateBroadcast and terminate accordingly --
         this.subscribeBroadcast(TerminateBroadcast.class, c -> {

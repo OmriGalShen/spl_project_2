@@ -46,7 +46,7 @@ public class C3POMicroservice extends MicroService {
             System.out.println("C3PO: I finished this attack!");
             Diary.getInstance().setC3POFinish(System.currentTimeMillis());
             Diary.getInstance().incrementTotalAttacks();
-            MessageBusImpl.getInstance().complete(c,true);
+            this.complete(c,true);
         });
         // -- subscribe to TerminateBroadcast and terminate accordingly --
         this.subscribeBroadcast(TerminateBroadcast.class, c -> {
