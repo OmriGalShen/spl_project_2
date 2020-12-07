@@ -33,7 +33,6 @@ public class LeiaMicroservice extends MicroService {
 
     @Override
     protected void initialize() {
-        MessageBusImpl messageBus = MessageBusImpl.getInstance();
         // -- wait for attackers to subscribe --
         try {
             Thread.sleep(5000); // 5 seconds
@@ -43,7 +42,7 @@ public class LeiaMicroservice extends MicroService {
         // -------------------------------------
         // --- send attacks ---
         for (int i = 0; i < attackEvents.length; i++) {
-            futures[i] = messageBus.sendEvent(attackEvents[i]);
+            futures[i] = this.sendEvent(attackEvents[i]);
         }
         System.out.println("Leia: I'm sending attacks!");
         // -- wait for attacks to finish --
@@ -52,7 +51,7 @@ public class LeiaMicroservice extends MicroService {
         }
         System.out.println("Leia: attacks are done!");
         // -- send DeactivationEvent to R2D2 --
-        messageBus.sendEvent(new DeactivationEvent());
+        this.sendEvent(new DeactivationEvent());
         System.out.println("Leia: I send DeactivationEvent!");
         // -- subscribe to TerminateBroadcast and terminate accordingly --
         this.subscribeBroadcast(TerminateBroadcast.class, c -> {

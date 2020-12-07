@@ -27,7 +27,6 @@ public class HanSoloMicroservice extends MicroService {
 
     @Override
     protected void initialize() {
-        MessageBusImpl messageBus = MessageBusImpl.getInstance();
         this.subscribeEvent(AttackEvent.class, c -> {
             System.out.println("Han: I got an attack to do..");
             List<Integer> serials = c.getAttack().getSerials();
