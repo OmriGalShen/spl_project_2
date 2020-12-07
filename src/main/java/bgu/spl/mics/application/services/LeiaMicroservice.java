@@ -41,15 +41,7 @@ public class LeiaMicroservice extends MicroService {
         }
         // -- wait for attacks to finish --
         for(Future future : futures){
-            while (!future.isDone()){
-                synchronized (Ewoks.getInstance()){
-                    try {
-                        wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
+            future.get(); // blocking until attack was resolved
         }
         // -- send DeactivationEvent to R2D2 --
         messageBus.sendEvent(new DeactivationEvent());
