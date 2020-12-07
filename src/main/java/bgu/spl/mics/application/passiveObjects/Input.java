@@ -15,13 +15,13 @@ public class Input {
 	public long getLando() {
 		return Lando;
 	}
-	public void setLando(int lando) {
+	public void setLando(long lando) {
 		Lando = lando;
 	}
 	public long getR2D2() {
 		return R2D2;
 	}
-	public void setR2D2(int r2d2) {
+	public void setR2D2(long r2d2) {
 		R2D2 = r2d2;
 	}
 	public Attack[] getAttacks() {
