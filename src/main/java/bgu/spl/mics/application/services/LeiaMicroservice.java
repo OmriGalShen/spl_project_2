@@ -44,15 +44,19 @@ public class LeiaMicroservice extends MicroService {
         for (int i = 0; i < attackEvents.length; i++) {
             futures[i] = messageBus.sendEvent(attackEvents[i]);
         }
+        System.out.println("Leia: I'm sending attacks!");
         // -- wait for attacks to finish --
         for(Future future : futures){
             future.get(); // blocking until attack was resolved
         }
+        System.out.println("Leia: attacks are done!");
         // -- send DeactivationEvent to R2D2 --
         messageBus.sendEvent(new DeactivationEvent());
+        System.out.println("Leia: I send DeactivationEvent!");
         // -- subscribe to TerminateBroadcast and terminate accordingly --
         this.subscribeBroadcast(TerminateBroadcast.class, c -> {
             Diary.getInstance().setLeiaTerminate(System.currentTimeMillis());
+            System.out.println("Leia: I'm done here!");
             this.terminate();
         });
         //------------------------------------------------------------------
