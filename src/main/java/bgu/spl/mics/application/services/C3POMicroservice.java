@@ -28,18 +28,23 @@ public class C3POMicroservice extends MicroService {
     @Override
     protected void initialize() {
         this.subscribeEvent(AttackEvent.class, c -> {
+            System.out.println("C3PO: I got an attack to do..");
             List<Integer> serials = c.getAttack().getSerials();
             for(int serial: serials ){
                 ewoks.acquire(serial);
-                ewoks.release(serial);
             }
             try {
                 Thread.sleep(c.getAttack().getDuration());
-                Diary.getInstance().setHanSoloFinish(System.currentTimeMillis());
-                MessageBusImpl.getInstance().complete(c,true);
+
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            for(int serial: serials ){
+                ewoks.release(serial);
+            }
+            System.out.println("C3PO: I finished this attack!");
+            Diary.getInstance().setC3POFinish(System.currentTimeMillis());
+            MessageBusImpl.getInstance().complete(c,true);
         });
         // -- subscribe to TerminateBroadcast and terminate accordingly --
         this.subscribeBroadcast(TerminateBroadcast.class, c -> {
