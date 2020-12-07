@@ -1,6 +1,5 @@
 package bgu.spl.mics.application.services;
-import java.util.ArrayList;
-import java.util.List;
+import bgu.spl.mics.Callback;
 import bgu.spl.mics.Future;
 import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.MicroService;
@@ -25,16 +24,26 @@ public class LeiaMicroservice extends MicroService {
 	
     public LeiaMicroservice(Attack[] attacks) {
         super("Leia");
+        // -- for each attack store it's future --
         this.futures = new Future[attacks.length];
+        // -- for each attack create Attack event --
         attackEvents = new AttackEvent[attacks.length];
         for (int i = 0; i <attacks.length ; i++) {
             attackEvents[i] = new AttackEvent(attacks[i]);
         }
+        // ------------------------------------------
     }
 
     @Override
     protected void initialize() {
         MessageBusImpl messageBus = MessageBusImpl.getInstance();
+        // -- wait for attackers to subscribe --
+        try {
+            Thread.sleep(5000); // 5 seconds
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        // -------------------------------------
         // --- send attacks ---
         for (int i = 0; i < attackEvents.length; i++) {
             futures[i] = messageBus.sendEvent(attackEvents[i]);
@@ -45,5 +54,14 @@ public class LeiaMicroservice extends MicroService {
         }
         // -- send DeactivationEvent to R2D2 --
         messageBus.sendEvent(new DeactivationEvent());
+        // -- subscribe to TerminateBroadcast and terminate accordingly --
+        this.subscribeBroadcast(TerminateBroadcast.class, new Callback<TerminateBroadcast>() {
+            @Override
+            public void call(TerminateBroadcast c) {
+                // TODO : call this object .terminate()
+            }
+        });
+        this.terminate();
+        //------------------------------------------------------------------
     }
 }
