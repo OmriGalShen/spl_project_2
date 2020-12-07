@@ -1,5 +1,8 @@
 package bgu.spl.mics.application.passiveObjects;
 
+import bgu.spl.mics.MessageBusImpl;
+import bgu.spl.mics.application.Main;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -26,14 +29,24 @@ public class Diary {
         LandoTerminate=0;
     }
 
-    public static Diary getInstance() {
-        if(instance==null)
-            return new Diary();
+    public static Diary getInstance(){ //Singleton pattern
+        if(instance == null){
+            //only on creation of first instance synchronize:
+            // this is to make sure only one thread creates the first instance
+            synchronized (Diary.class){
+                if(instance==null)
+                    instance = new Diary();
+            }
+        }
         return instance;
     }
 
     public AtomicInteger getTotalAttacks() {
         return totalAttacks;
+    }
+
+    public void incrementTotalAttacks(){
+        totalAttacks.getAndIncrement();
     }
 
     public void setTotalAttacks(AtomicInteger totalAttacks) {
@@ -45,7 +58,7 @@ public class Diary {
     }
 
     public void setHanSoloFinish(long hanSoloFinish) {
-        HanSoloFinish = hanSoloFinish;
+        HanSoloFinish = hanSoloFinish- Main.startTime;
     }
 
     public long getC3POFinish() {
@@ -53,7 +66,7 @@ public class Diary {
     }
 
     public void setC3POFinish(long c3POFinish) {
-        C3POFinish = c3POFinish;
+        C3POFinish = c3POFinish- Main.startTime;
     }
 
     public long getR2D2Deactivate() {
@@ -61,7 +74,7 @@ public class Diary {
     }
 
     public void setR2D2Deactivate(long r2D2Deactivate) {
-        R2D2Deactivate = r2D2Deactivate;
+        R2D2Deactivate = r2D2Deactivate- Main.startTime;
     }
 
     public long getLeiaTerminate() {
@@ -69,7 +82,7 @@ public class Diary {
     }
 
     public void setLeiaTerminate(long leiaTerminate) {
-        LeiaTerminate = leiaTerminate;
+        LeiaTerminate = leiaTerminate- Main.startTime;
     }
 
     public long getHanSoloTerminate() {
@@ -77,7 +90,7 @@ public class Diary {
     }
 
     public void setHanSoloTerminate(long hanSoloTerminate) {
-        HanSoloTerminate = hanSoloTerminate;
+        HanSoloTerminate = hanSoloTerminate- Main.startTime;
     }
 
     public long getC3POTerminate() {
@@ -85,7 +98,7 @@ public class Diary {
     }
 
     public void setC3POTerminate(long c3POTerminate) {
-        C3POTerminate = c3POTerminate;
+        C3POTerminate = c3POTerminate- Main.startTime;
     }
 
     public long getR2D2Terminate() {
@@ -93,7 +106,7 @@ public class Diary {
     }
 
     public void setR2D2Terminate(long r2D2Terminate) {
-        R2D2Terminate = r2D2Terminate;
+        R2D2Terminate = r2D2Terminate- Main.startTime;
     }
 
     public long getLandoTerminate() {
@@ -101,6 +114,6 @@ public class Diary {
     }
 
     public void setLandoTerminate(long landoTerminate) {
-        LandoTerminate = landoTerminate;
+        LandoTerminate = landoTerminate- Main.startTime;
     }
 }

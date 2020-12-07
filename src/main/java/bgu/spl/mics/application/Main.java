@@ -19,6 +19,7 @@ import com.google.gson.stream.JsonReader;
  * In the end, you should output a JSON.
  */
 public class Main {
+	public static long startTime=0;
 	public static void main(String[] args) {
 		// <----------input ---------->
 		if(args.length!=2) {
@@ -71,6 +72,8 @@ public class Main {
 		MessageBusImpl messageBus = MessageBusImpl.getInstance();
 		MicroService[] microArray = new MicroService[5];
 		Thread[] threads = new Thread[5];
+		Ewoks ewoks = Ewoks.getInstance();
+		ewoks.initialize(input.getEwoks());
 
 		microArray[0] = new LeiaMicroservice(input.getAttacks());
 		microArray[1] = new C3POMicroservice();
@@ -81,6 +84,7 @@ public class Main {
 		for (int i = 0; i < threads.length ; i++) {
 			threads[i] = new Thread(microArray[i]);
 		}
+		startTime = System.currentTimeMillis();
 		for (Thread thread : threads) {
 			thread.start();
 		}
@@ -90,6 +94,7 @@ public class Main {
 			}
 		}
 		catch (InterruptedException e){}
+		System.out.println("STAR WARS - A NEW HOPE FOR A GOOD SPL PROJECT!");
 	}
 }
 

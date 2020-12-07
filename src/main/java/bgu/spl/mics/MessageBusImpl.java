@@ -94,8 +94,10 @@ public class MessageBusImpl implements MessageBus {
 	 */
 	@Override @SuppressWarnings("unchecked")
 	public <T> void complete(Event<T> e, T result) {
-		if(eventFutureMap.containsKey(e)&&eventFutureMap.get(e)!=null)
+		if(eventFutureMap.containsKey(e)&&eventFutureMap.get(e)!=null){
 			eventFutureMap.get(e).resolve(result);
+			System.out.println("Universe: an event was resolved!");
+		}
 		else
 			throw new IllegalStateException("Event wasn't registered or Future was null");
 	}
@@ -120,6 +122,10 @@ public class MessageBusImpl implements MessageBus {
 				messagesMap.get(microService).add(b); // add b to microservice message queue
 			}
 		});
+		// Give everyone a chance to grab the new message
+		synchronized (this){
+			notifyAll();
+		}
 	}
 
 	/**
@@ -147,11 +153,9 @@ public class MessageBusImpl implements MessageBus {
 		MicroService receivingMicro = receivingQueue.remove(); // remove the first micro in receiving queue
 		receivingQueue.add(receivingMicro); // add to the back of the receiving queue
 		messagesMap.get(receivingMicro).add(e); // add message to micro
-		// In case receivingMicro is waiting for this broadcast in awaitMessage()
-		if(messagesMap.get(receivingMicro).isEmpty()){
-			synchronized (this){
-				notifyAll(); // make sure receivingMicro is out of wait loop in awaitMessage()
-			}
+		// Give everyone a chance to grab the new message
+		synchronized (this){
+			notifyAll();
 		}
         return eventFuture;
 	}
