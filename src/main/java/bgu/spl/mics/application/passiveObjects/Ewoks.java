@@ -16,6 +16,7 @@ public class Ewoks {
     private List<Ewok> ewoksList;
 
     private Ewoks(){
+        this.ewoksList = Collections.synchronizedList(new ArrayList<>(0));
     }
     public static Ewoks getInstance(){ //Singleton pattern
         if(instance == null){
@@ -29,10 +30,12 @@ public class Ewoks {
         return instance;
     }
     public void initialize(int size){
-        this.ewoksList = Collections.synchronizedList(new ArrayList<>(size));
+        for (int i = 0; i <size ; i++) {
+            this.ewoksList.add(new Ewok(i));
+        }
     }
     public void acquire(int serialNumber){
-        Ewok e = ewoksList.get(serialNumber);
+        Ewok e = ewoksList.get(serialNumber-1);
         while (!e.available){
             synchronized (this){
                 try {
@@ -43,15 +46,12 @@ public class Ewoks {
             }
 
         }
-        ewoksList.get(serialNumber).acquire();
+        e.acquire();
     }
     public void release(int serialNumber){
-        ewoksList.get(serialNumber).release();
+        ewoksList.get(serialNumber-1).release();
         synchronized (this) {
             notifyAll();
         }
-    }
-    public boolean isAvailable(int serialNumber){
-        return ewoksList.get(serialNumber).available;
     }
 }
