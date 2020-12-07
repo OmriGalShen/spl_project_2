@@ -1,14 +1,11 @@
 package bgu.spl.mics.application.services;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import bgu.spl.mics.Callback;
 import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.AttackEvent;
 import bgu.spl.mics.application.messages.TerminateBroadcast;
-import bgu.spl.mics.application.passiveObjects.Attack;
 import bgu.spl.mics.application.passiveObjects.Diary;
 import bgu.spl.mics.application.passiveObjects.Ewoks;
 
@@ -27,32 +24,28 @@ public class HanSoloMicroservice extends MicroService {
         this.ewoks = Ewoks.getInstance();
     }
 
-
     @Override
     protected void initialize() {
         MessageBusImpl messageBus = MessageBusImpl.getInstance();
-        this.subscribeEvent(AttackEvent.class, new Callback<AttackEvent>() {
-            @Override
-            public void call(AttackEvent c) {
-                List<Integer> serials = c.getAttack().getSerials();
-                for(int serial: serials ){
-                    ewoks.acquire(serial);
-                    ewoks.release(serial);
-                }
-                try {
-                    Thread.sleep(c.getAttack().getDuration());
-                    Diary.getInstance().setHanSoloFinish(System.currentTimeMillis());
-                    MessageBusImpl.getInstance().complete(c,true);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+        this.subscribeEvent(AttackEvent.class, c -> {
+            List<Integer> serials = c.getAttack().getSerials();
+            for(int serial: serials ){
+                ewoks.acquire(serial);
+                ewoks.release(serial);
+            }
+            try {
+                Thread.sleep(c.getAttack().getDuration());
+                Diary.getInstance().setHanSoloFinish(System.currentTimeMillis());
+                MessageBusImpl.getInstance().complete(c,true);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         });
-        this.subscribeBroadcast(TerminateBroadcast.class, new Callback<TerminateBroadcast>() {
-            @Override
-            public void call(TerminateBroadcast c) {
-                // TODO : call this object .terminate()
-            }
+        // -- subscribe to TerminateBroadcast and terminate accordingly --
+        this.subscribeBroadcast(TerminateBroadcast.class, c -> {
+            Diary.getInstance().setHanSoloTerminate(System.currentTimeMillis());
+            this.terminate();
         });
+        //------------------------------------------------------------------
     }
 }
