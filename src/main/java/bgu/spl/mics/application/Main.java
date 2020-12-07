@@ -3,16 +3,10 @@ package bgu.spl.mics.application;
 import bgu.spl.mics.*;
 import bgu.spl.mics.application.passiveObjects.*;
 import bgu.spl.mics.application.services.*;
-//import bgu.spl.mics.example.messages.ExampleEvent;
-//import bgu.spl.mics.example.services.ExampleEventHandlerService;
 
 import java.io.*;
-import java.lang.reflect.Type;
-import java.util.*;
 
 import com.google.gson.*;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
 
 /** This is the Main class of the application. You should parse the input file, 
  * create the different components of the application, and run the system.
@@ -36,12 +30,13 @@ public class Main {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
-		// <----------input ---------->
+		if(input == null)
+			throw new NullPointerException("Problem reading input from json");
+		// ---------------------------
 
 		// <--------main program ---------->
-		if(input!=null)
-			starWars(input);
-		// <--------main program ---------->
+		starWars(input);
+		// --------------------------------
 
 		// <----------output ---------->
 		Diary recordDiary = Diary.getInstance();
@@ -50,9 +45,16 @@ public class Main {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		// <----------output ---------->
+		// -----------------------------
 
 	}
+
+	/**
+	 * A static helper function to read input.json file
+	 * @param filePath
+	 * @return input json path
+	 * @throws IOException
+	 */
 	private static Input getInputFromJson(String filePath) throws IOException {
 		Gson gson = new Gson();
 		try (Reader reader = new FileReader(filePath)) {
@@ -60,6 +62,12 @@ public class Main {
 		}
 	}
 
+	/**
+	 * A static helper function to produce output.json file
+	 * @param filePath output json path
+	 * @param recordDiary diary to output
+	 * @throws IOException
+	 */
 	private static void diaryToJson(String filePath, Diary recordDiary) throws IOException {
 		Gson gson = new Gson();
 		try (Writer writer = new FileWriter(filePath)) {
@@ -67,6 +75,10 @@ public class Main {
 		}
 	}
 
+	/**
+	 * Main program, here threads are declared and run
+	 * @param input used to retrieve input info
+	 */
 	private static void starWars(Input input)
 	{
 		MessageBusImpl messageBus = MessageBusImpl.getInstance();
