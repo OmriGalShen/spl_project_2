@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Only private fields and methods can be added to this class.
  */
 public class MessageBusImpl implements MessageBus {
-	private static MessageBusImpl instance;
+	private static MessageBusImpl instance=null;
 	// for each MicroService store message queue
 	private ConcurrentHashMap<MicroService, LinkedList<Message>> messagesMap;
 	// for each MicroService store subscriptions queue
