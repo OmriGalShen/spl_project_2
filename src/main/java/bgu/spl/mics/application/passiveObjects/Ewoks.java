@@ -29,7 +29,7 @@ public class Ewoks {
         }
         return instance;
     }
-    public void initialize(int size){
+    public void initializeSize(int size){
         for (int i = 0; i <size ; i++) {
             this.ewoksList.add(new Ewok(i));
         }

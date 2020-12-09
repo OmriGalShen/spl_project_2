@@ -28,6 +28,7 @@ public class Main {
 			input= getInputFromJson(inputFilePath);
 		}
 		catch (IOException e) {
+			System.out.println("IOException on input from json file");
 			e.printStackTrace();
 		}
 		if(input == null)
@@ -43,6 +44,7 @@ public class Main {
 		try {
 			diaryToJson(outputFilePath,recordDiary);
 		} catch (IOException e) {
+			System.out.println("IOException on output of Diary to json format");
 			e.printStackTrace();
 		}
 		// -----------------------------
@@ -84,7 +86,7 @@ public class Main {
 		MicroService[] microArray = new MicroService[5];
 		Thread[] threads = new Thread[5];
 		Ewoks ewoks = Ewoks.getInstance();
-		ewoks.initialize(input.getEwoks());
+		ewoks.initializeSize(input.getEwoks());
 
 		microArray[0] = new LeiaMicroservice(input.getAttacks());
 		microArray[1] = new C3POMicroservice();
@@ -104,7 +106,10 @@ public class Main {
 				thread.join();
 			}
 		}
-		catch (InterruptedException e){}
+		catch (InterruptedException e){
+			System.out.println("InterruptedException on threads join()");
+			e.printStackTrace();
+		}
 		System.out.println("STAR WARS - A NEW HOPE FOR A GOOD SPL PROJECT!");
 	}
 }
