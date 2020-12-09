@@ -50,6 +50,7 @@ public class HanSoloMicroservice extends MicroService {
         // -- subscribe to TerminateBroadcast and terminate accordingly --
         this.subscribeBroadcast(TerminateBroadcast.class, c -> {
             Diary.getInstance().setHanSoloTerminate(System.currentTimeMillis());
+            System.out.println("Han: I'm done here!");
             this.terminate();
         });
         //------------------------------------------------------------------

@@ -51,6 +51,7 @@ public class C3POMicroservice extends MicroService {
         // -- subscribe to TerminateBroadcast and terminate accordingly --
         this.subscribeBroadcast(TerminateBroadcast.class, c -> {
             Diary.getInstance().setC3POTerminate(System.currentTimeMillis());
+            System.out.println("C3PO: I'm done here!");
             this.terminate();
         });
         //------------------------------------------------------------------

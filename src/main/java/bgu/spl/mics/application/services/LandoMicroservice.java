@@ -34,6 +34,7 @@ public class LandoMicroservice  extends MicroService {
             System.out.println("Lando: time to return home");
             this.sendBroadcast(new TerminateBroadcast());
             Diary.getInstance().setLandoTerminate(System.currentTimeMillis());
+            System.out.println("Lando: I'm done here!");
             this.terminate();
         });
     }

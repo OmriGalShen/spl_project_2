@@ -38,6 +38,7 @@ public class R2D2Microservice extends MicroService {
         // -- subscribe to TerminateBroadcast and terminate accordingly --
         this.subscribeBroadcast(TerminateBroadcast.class, c -> {
             Diary.getInstance().setR2D2Terminate(System.currentTimeMillis());
+            System.out.println("R2D2: I'm done here!");
             this.terminate();
         });
         //------------------------------------------------------------------
