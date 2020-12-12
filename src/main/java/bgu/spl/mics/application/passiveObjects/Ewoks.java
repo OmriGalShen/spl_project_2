@@ -56,8 +56,8 @@ public class Ewoks {
                     System.out.println("InterruptedException on Ewoks acquire()");
                     e.printStackTrace();
                 }
-                ewok.acquire();
             }
+            ewok.acquire();
         }
     }
     public void release(int serialNumber){
