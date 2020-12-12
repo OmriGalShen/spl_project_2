@@ -1,5 +1,6 @@
 package bgu.spl.mics.application.services;
 
+import java.util.Collections;
 import java.util.List;
 
 import bgu.spl.mics.MessageBusImpl;
@@ -30,16 +31,16 @@ public class HanSoloMicroservice extends MicroService {
         this.subscribeEvent(AttackEvent.class, c -> {
             System.out.println("Han: I got an attack to do..");
             List<Integer> serials = c.getAttack().getSerials();
-            for(int serial: serials ){
-                ewoks.acquire(serial);
+            Collections.sort(serials); // prevent deadlock
+            for(int serial: serials ){ //acquire all resources
+                ewoks.acquire(serial); // blocking if ewok not available
             }
-            try {
+            try { //All resources were acquired
                 Thread.sleep(c.getAttack().getDuration());
-
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            for(int serial: serials ){
+            for(int serial: serials ){ //release all resources
                 ewoks.release(serial);
             }
             System.out.println("Han: I finished this attack!");
