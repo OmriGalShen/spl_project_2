@@ -48,17 +48,17 @@ public class Ewoks {
     }
     public void acquire(int serialNumber) {
         Ewok ewok = ewoksList.get(serialNumber-1);
-        while (!ewok.available){
-            synchronized (this){
+        synchronized (this) {
+            while (!ewok.available) {
                 try {
                     wait(); //blocking!!
                 } catch (InterruptedException e) {
                     System.out.println("InterruptedException on Ewoks acquire()");
                     e.printStackTrace();
                 }
+                ewok.acquire();
             }
         }
-        ewok.acquire(); // Not Thread Safe!!!!!
     }
     public void release(int serialNumber){
         Ewok ewok = ewoksList.get(serialNumber-1);
