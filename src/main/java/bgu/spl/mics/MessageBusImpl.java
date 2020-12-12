@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Only private fields and methods can be added to this class.
  */
 public class MessageBusImpl implements MessageBus {
-	private static MessageBusImpl instance=null;
+	private static MessageBusImpl instance=null; //Singleton pattern
 	// for each MicroService store message queue
 	private ConcurrentHashMap<MicroService, LinkedList<Message>> messagesMap;
 	// for each MicroService store subscriptions queue
@@ -114,12 +114,6 @@ public class MessageBusImpl implements MessageBus {
 		subscriptionMap.forEach((microService,subscription)-> {
 			//check if microservice is subscribe this type of broadcast
 			if(subscription.contains(b.getClass())){
-				// In case microService is waiting for this broadcast in awaitMessage()
-				if(messagesMap.get(microService).isEmpty()){
-					synchronized (this){
-						notifyAll();// make sure receivingMicro is out of wait loop in awaitMessage()
-					}
-				}
 				messagesMap.get(microService).add(b); // add b to microservice message queue
 			}
 		});
@@ -149,6 +143,7 @@ public class MessageBusImpl implements MessageBus {
 				eventReceiveQueues.get(e.getClass()).isEmpty()){
 			return eventFuture;
 		}
+		// Round Robin:
 		// queue of MicroService who registered to this type of event
 		ConcurrentLinkedQueue<MicroService> receivingQueue = eventReceiveQueues.get(e.getClass());
 		MicroService receivingMicro = receivingQueue.remove(); // remove the first micro in receiving queue
@@ -189,6 +184,7 @@ public class MessageBusImpl implements MessageBus {
 		messagesMap.remove(m);
 		subscriptionMap.remove(m);
 		eventReceiveQueues.forEach((eventType,receiveQueues)->{
+			// remove microservice from event queue (does nothing if he is not in the queue)
 			receiveQueues.remove(m);
 		});
 	}
@@ -216,7 +212,7 @@ public class MessageBusImpl implements MessageBus {
 		while(messageQueue.isEmpty()){
 			synchronized (this){
 				try {
-					wait();
+					wait(); //Blocking!!!
 				}
 				catch (InterruptedException e){
 					System.out.println("interrupted while waiting for a message");
