@@ -52,13 +52,13 @@ public class Ewoks {
             synchronized (this){
                 try {
                     wait(); //blocking!!
-                    ewok.acquire();
                 } catch (InterruptedException e) {
                     System.out.println("InterruptedException on Ewoks acquire()");
                     e.printStackTrace();
                 }
             }
         }
+        ewok.acquire(); // Not Thread Safe!!!!!
     }
     public void release(int serialNumber){
         Ewok ewok = ewoksList.get(serialNumber-1);
