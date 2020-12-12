@@ -85,8 +85,7 @@ public class Main {
 	{
 		MicroService[] microArray = new MicroService[5];
 		Thread[] threads = new Thread[5];
-		Ewoks ewoks = Ewoks.getInstance();
-		ewoks.initializeSize(input.getEwoks());
+		Ewoks ewoks = Ewoks.getInstance(input.getEwoks());
 
 		microArray[0] = new LeiaMicroservice(input.getAttacks());
 		microArray[1] = new C3POMicroservice();

@@ -12,11 +12,17 @@ import java.util.*;
  * You can add ONLY private methods and fields to this class.
  */
 public class Ewoks {
-    private static Ewoks instance=null;
-    private List<Ewok> ewoksList;
+    private static Ewoks instance=null;//Singleton pattern
+    private ArrayList<Ewok> ewoksList;
 
     private Ewoks(){
-        this.ewoksList = Collections.synchronizedList(new ArrayList<>(0));
+        this.ewoksList = new ArrayList<>(0);
+    }
+    private Ewoks(int size){
+        this.ewoksList = new ArrayList<>();
+        for (int i = 0; i <size ; i++) {
+            this.ewoksList.add(new Ewok(i));
+        }
     }
     public static Ewoks getInstance(){ //Singleton pattern
         if(instance == null){
@@ -29,29 +35,36 @@ public class Ewoks {
         }
         return instance;
     }
-    public void initializeSize(int size){
-        for (int i = 0; i <size ; i++) {
-            this.ewoksList.add(new Ewok(i));
+    public static Ewoks getInstance(int size){ //Singleton pattern
+        if(instance == null){
+            //only on creation of first instance synchronize:
+            // this is to make sure only one thread creates the first instance
+            synchronized (Ewoks.class){
+                if(instance==null)
+                    instance = new Ewoks(size);
+            }
         }
+        return instance;
     }
-    public void acquire(int serialNumber){
-        Ewok e = ewoksList.get(serialNumber-1);
-        while (!e.available){
+    public void acquire(int serialNumber) {
+        Ewok ewok = ewoksList.get(serialNumber-1);
+        while (!ewok.available){
             synchronized (this){
                 try {
-                    wait();
-                } catch (InterruptedException interruptedException) {
-                    interruptedException.printStackTrace();
+                    wait(); //blocking!!
+                    ewok.acquire();
+                } catch (InterruptedException e) {
+                    System.out.println("InterruptedException on Ewoks acquire()");
+                    e.printStackTrace();
                 }
             }
-
         }
-        e.acquire();
     }
     public void release(int serialNumber){
-        ewoksList.get(serialNumber-1).release();
+        Ewok ewok = ewoksList.get(serialNumber-1);
+        ewok.release();
         synchronized (this) {
-            notifyAll();
+            notifyAll(); // give waiting thread opportunity to catch the released Ewok
         }
     }
 }
