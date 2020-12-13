@@ -1,9 +1,9 @@
 package bgu.spl.mics;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * The {@link MessageBusImpl class is the implementation of the MessageBus interface.
@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class MessageBusImpl implements MessageBus {
 	private static MessageBusImpl instance=null; //Singleton pattern
 	// for each MicroService store message queue
-	private ConcurrentHashMap<MicroService, LinkedList<Message>> messagesMap;
+	private ConcurrentHashMap<MicroService, LinkedBlockingQueue<Message>> messagesMap;
 	// for each MicroService store subscriptions queue
 	private ConcurrentHashMap<MicroService,LinkedList<Class<? extends Message>>> subscriptionMap;
 	// store associations of events and Future objects
@@ -114,13 +114,14 @@ public class MessageBusImpl implements MessageBus {
 		subscriptionMap.forEach((microService,subscription)-> {
 			//check if microservice is subscribe this type of broadcast
 			if(subscription.contains(b.getClass())){
-				messagesMap.get(microService).add(b); // add b to microservice message queue
+				try {
+					messagesMap.get(microService).put(b); // add b to microservice message queue
+				} catch (InterruptedException e) {
+					System.out.println("InterruptedException while trying to give microservice a broadcast");
+					e.printStackTrace();
+				}
 			}
 		});
-		// Give everyone a chance to grab the new message
-		synchronized (this){
-			notifyAll();
-		}
 	}
 
 	/**
@@ -148,12 +149,13 @@ public class MessageBusImpl implements MessageBus {
 		ConcurrentLinkedQueue<MicroService> receivingQueue = eventReceiveQueues.get(e.getClass());
 		MicroService receivingMicro = receivingQueue.remove(); // remove the first micro in receiving queue
 		receivingQueue.add(receivingMicro); // add to the back of the receiving queue
-		messagesMap.get(receivingMicro).add(e); // add message to micro
-		// Give everyone a chance to grab the new message
-		synchronized (this){
-			notifyAll();
+		try {
+			messagesMap.get(receivingMicro).put(e); // add message to micro
+		} catch (InterruptedException interruptedException) {
+			System.out.println("InterruptedException while trying to give microservice a message");
+			interruptedException.printStackTrace();
 		}
-        return eventFuture;
+		return eventFuture;
 	}
 
 	/**
@@ -165,10 +167,9 @@ public class MessageBusImpl implements MessageBus {
 	public void register(MicroService m) {
 		if(isRegistered(m))
 			return;//already registered
-		LinkedList<Message> messagesQueue = new LinkedList<Message>();
-		LinkedList<Class<? extends Message>> messageTypeQueue = new LinkedList<Class<? extends Message>>();
-		messagesMap.put(m,messagesQueue);
-		subscriptionMap.put(m,messageTypeQueue);
+		// Initialize appropriate empty blocking queues
+		messagesMap.put(m,new LinkedBlockingQueue<Message>());
+		subscriptionMap.put(m,new LinkedList<Class<? extends Message>>());
 	}
 
 	/**
@@ -208,20 +209,7 @@ public class MessageBusImpl implements MessageBus {
 	public Message awaitMessage(MicroService m) throws InterruptedException {
 		// checks MicroService is registered to this MessageBus
 		if(!isRegistered(m)) throw new IllegalStateException();
-		LinkedList<Message> messageQueue = messagesMap.get(m); // get MicroService messageQueue
-		while(messageQueue.isEmpty()){
-			synchronized (this){
-				try {
-					wait(); //Blocking!!!
-				}
-				catch (InterruptedException e){
-					System.out.println("interrupted while waiting for a message");
-					e.printStackTrace();
-				}
-			}
-		}
-		// remove message from message queue and return it
-		return messageQueue.remove();
+		return messagesMap.get(m).take(); // wait until message is available
 	}
 
 	/**
