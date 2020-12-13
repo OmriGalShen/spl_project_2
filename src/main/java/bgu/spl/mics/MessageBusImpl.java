@@ -54,17 +54,12 @@ public class MessageBusImpl implements MessageBus {
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
 		if(isRegistered(m)) {
+
 			if (subscriptionMap.get(m).contains(type))
 				return; //MicroService was already subscribed
 			subscriptionMap.get(m).add(type); // add subscription
-			if (eventReceiveQueues.containsKey(type)) { // add to appropriate event map
-				eventReceiveQueues.get(type).add(m);
-			}
-			else{ // new type of event
-				// create new queue of microservices subscribed to this event type
-				eventReceiveQueues.put(type,new ConcurrentLinkedQueue<>());
-				eventReceiveQueues.get(type).add(m); // add the MicroService to the queue
-			}
+			eventReceiveQueues.putIfAbsent(type,new ConcurrentLinkedQueue<>());
+			eventReceiveQueues.get(type).add(m);
 		}
 	}
 
