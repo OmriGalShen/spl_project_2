@@ -83,6 +83,7 @@ public class Main {
 	 */
 	private static void starWars(Input input)
 	{
+		System.out.println("A Long time ago in a galaxy far far away...");
 		MicroService[] microArray = new MicroService[5];
 		Thread[] threads = new Thread[5];
 		Ewoks ewoks = Ewoks.getInstance(input.getEwoks());
@@ -110,6 +111,7 @@ public class Main {
 			e.printStackTrace();
 		}
 		System.out.println("STAR WARS - A NEW HOPE FOR A GOOD SPL PROJECT!");
+		System.out.println("MAY THE FORCE BE WITH YOU");
 	}
 }
 
