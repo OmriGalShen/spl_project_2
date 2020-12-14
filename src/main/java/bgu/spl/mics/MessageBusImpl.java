@@ -129,12 +129,12 @@ public class MessageBusImpl implements MessageBus {
 	 */
 	@Override
 	public <T> Future<T> sendEvent(Event<T> e) {
+		if(!eventReceiveQueues.containsKey(e.getClass()) || eventReceiveQueues.get(e.getClass()).isEmpty()) {
+			return null;
+		}
 		Future<T> eventFuture = new Future<>(); // the future associated with the event
 		eventFutureMap.put(e,eventFuture); // store the association of the future and the event
 		// no microservice to receive event
-		if(!eventReceiveQueues.containsKey(e.getClass()) || eventReceiveQueues.get(e.getClass()).isEmpty()) {
-			return eventFuture;
-		}
 		// Round Robin:
 		// queue of MicroService who registered to this type of event
 		ConcurrentLinkedQueue<MicroService> receivingQueue = eventReceiveQueues.get(e.getClass());

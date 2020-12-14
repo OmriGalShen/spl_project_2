@@ -12,10 +12,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Diary {
     private static Diary instance=null;
-    private AtomicInteger totalAttacks;
-    private long HanSoloFinish, C3POFinish; // timestamp - finished all the attacks
-    private long R2D2Deactivate; // timestamp - finished deactivating
-    private long LeiaTerminate, HanSoloTerminate,C3POTerminate,R2D2Terminate, LandoTerminate; // timestamp - right before the termination
+    public AtomicInteger totalAttacks;
+    public long HanSoloFinish, C3POFinish; // timestamp - finished all the attacks
+    public long R2D2Deactivate; // timestamp - finished deactivating
+    public long LeiaTerminate, HanSoloTerminate,C3POTerminate,R2D2Terminate, LandoTerminate; // timestamp - right before the termination
 
     private Diary(){
         totalAttacks = new AtomicInteger(0);
