@@ -31,13 +31,13 @@ public class Future<T> {
      * 	       
      */
 	public synchronized T get() {
-		while(!isDone){
+		while(!isDone) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		};
+		}
         return this.result;
 	}
 	
@@ -46,7 +46,7 @@ public class Future<T> {
      */
 	public synchronized void resolve (T result) {
 		this.result = result;
-		this.isDone= true;
+		this.isDone = true;
 		notifyAll();
 	}
 	
@@ -73,13 +73,13 @@ public class Future<T> {
 			return this.result;
 		long timeoutMillis = unit.toMillis(timeout);
 		boolean finished = false;
-		long currentTime=0L;
+		long currentTime=0L; // what is 0L? - Eden ////////////////////////////////////////
 		long deadline = System.currentTimeMillis()+timeoutMillis;
 		while (!finished){
 			if(this.isDone)
 				return this.result;
 			currentTime = deadline-System.currentTimeMillis();
-			if(currentTime <= 0) //timeout passed
+			if(currentTime <= 0) // timeout passed
 				finished=true;
 		}
 		return null;

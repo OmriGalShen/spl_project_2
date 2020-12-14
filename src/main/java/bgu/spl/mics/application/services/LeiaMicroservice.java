@@ -1,6 +1,6 @@
 package bgu.spl.mics.application.services;
 import bgu.spl.mics.*;
-import bgu.spl.mics.application.Main;
+//import bgu.spl.mics.application.Main;
 import bgu.spl.mics.application.messages.AttackEvent;
 import bgu.spl.mics.application.messages.DeactivationEvent;
 import bgu.spl.mics.application.messages.TerminateBroadcast;
@@ -43,25 +43,33 @@ public class LeiaMicroservice extends MicroService {
         this.sendAttacks();
         // -- send DeactivationEvent to R2D2 --
         this.sendEvent(new DeactivationEvent());
+
         System.out.println("Leia: I sent DeactivationEvent!");
+
         // -- subscribe to TerminateBroadcast and terminate accordingly --
         this.subscribeBroadcast(TerminateBroadcast.class, c -> {
             Diary.getInstance().setLeiaTerminate(System.currentTimeMillis());
+
             System.out.println("Leia: I'm done here!");
+
             this.terminate();
         });
-        //------------------------------------------------------------------
+        // ------------------------------------------------------------------
     }
-    private void sendAttacks(){
+    private void sendAttacks() {
+
         System.out.println("Leia: I'm sending attacks!");
-        for (int i = 0; i < attackEvents.length; i++) {
+
+        for (int i=0; i < attackEvents.length; i++) {
             // -- for each attack store it's future --
             futures[i] = this.sendEvent(attackEvents[i]);
         }
         // -- wait for attacks to finish --
-        for(Future future : futures){
+        for(Future future : futures) {
             future.get(); // blocking until attack was resolved
         }
+
         System.out.println("Leia: attacks are done!");
+
     }
 }

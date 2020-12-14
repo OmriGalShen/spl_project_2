@@ -4,8 +4,12 @@ import bgu.spl.mics.application.passiveObjects.Attack;
 
 public class AttackEvent implements Event<Boolean> {
     private Attack attack;
-    public AttackEvent(){this.attack=null;}
-	public AttackEvent(Attack attack){
+
+    public AttackEvent() {
+        this.attack=null;
+    }
+
+	public AttackEvent(Attack attack) {
 	    this.attack = attack;
     }
 
@@ -13,7 +17,7 @@ public class AttackEvent implements Event<Boolean> {
         return attack;
     }
 
-    public void setAttack(Attack attack) {
-        this.attack = attack;
-    }
+//    public void setAttack(Attack attack) {
+//        this.attack = attack;
+//    }
 }

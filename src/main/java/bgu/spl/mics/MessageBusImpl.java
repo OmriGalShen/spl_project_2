@@ -11,13 +11,13 @@ import java.util.concurrent.LinkedBlockingQueue;
  * Only private fields and methods can be added to this class.
  */
 public class MessageBusImpl implements MessageBus {
-	private static MessageBusImpl instance=null; //Singleton pattern
+	private static MessageBusImpl instance=null; // singleton pattern
 	// for each MicroService store message queue
 	private ConcurrentHashMap<MicroService, LinkedBlockingQueue<Message>> messagesMap;
 	// for each MicroService store subscriptions queue
 	private ConcurrentHashMap<MicroService,LinkedList<Class<? extends Message>>> subscriptionMap;
 	// store associations of events and Future objects
-	private ConcurrentHashMap<Event,Future> eventFutureMap;
+	private ConcurrentHashMap<Event, Future> eventFutureMap;
 	// for each type of event store receiving microservices
 	private ConcurrentHashMap<Class<? extends Message>, ConcurrentLinkedQueue<MicroService>> eventReceiveQueues;
 
@@ -25,19 +25,19 @@ public class MessageBusImpl implements MessageBus {
 	 * Private constructor
 	 * Added*
 	 */
-	private MessageBusImpl() { //Singleton pattern
+	private MessageBusImpl() { // singleton pattern
 		messagesMap = new ConcurrentHashMap<>();
 		subscriptionMap = new ConcurrentHashMap<>();
 		eventFutureMap = new ConcurrentHashMap<>();
 		eventReceiveQueues = new ConcurrentHashMap<>();
 	}
 
-	public static MessageBusImpl getInstance(){ //Singleton pattern
-		if(instance == null){
-			//only on creation of first instance synchronize:
+	public static MessageBusImpl getInstance() { // singleton pattern
+		if(instance == null) {
+			// only on creation of first instance synchronize:
 			// this is to make sure only one thread creates the first instance
-			synchronized (MessageBusImpl.class){
-				if(instance==null)
+			synchronized (MessageBusImpl.class) {
+				if(instance == null)
 					instance = new MessageBusImpl();
 			}
 		}
@@ -54,9 +54,8 @@ public class MessageBusImpl implements MessageBus {
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
 		if(isRegistered(m)) {
-
 			if (subscriptionMap.get(m).contains(type))
-				return; //MicroService was already subscribed
+				return; // microService was already subscribed
 			subscriptionMap.get(m).add(type); // add subscription
 			eventReceiveQueues.putIfAbsent(type,new ConcurrentLinkedQueue<>());
 			eventReceiveQueues.get(type).add(m);
@@ -73,7 +72,7 @@ public class MessageBusImpl implements MessageBus {
 	public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
 		if(isRegistered(m)) {
 			if (subscriptionMap.get(m).contains(type))
-				return;//MicroService was already subscribed
+				return; // microService was already subscribed
 			subscriptionMap.get(m).add(type);
 		}
     }
@@ -90,7 +89,7 @@ public class MessageBusImpl implements MessageBus {
 	 */
 	@Override @SuppressWarnings("unchecked")
 	public <T> void complete(Event<T> e, T result) {
-		if(eventFutureMap.containsKey(e)&&eventFutureMap.get(e)!=null){
+		if(eventFutureMap.containsKey(e)&&eventFutureMap.get(e) != null) {
 			eventFutureMap.get(e).resolve(result);
 			System.out.println("Universe: an event was resolved!");
 		}
@@ -107,8 +106,7 @@ public class MessageBusImpl implements MessageBus {
 	@Override
 	public void sendBroadcast(Broadcast b) {
 		subscriptionMap.forEach((microService,subscription)-> {
-			//check if microservice is subscribe this type of broadcast
-			if(subscription.contains(b.getClass())){
+			if(subscription.contains(b.getClass())) { // check if microservice is subscribe this type of broadcast
 				try {
 					messagesMap.get(microService).put(b); // add b to microservice message queue
 				} catch (InterruptedException e) {
@@ -133,10 +131,8 @@ public class MessageBusImpl implements MessageBus {
 	public <T> Future<T> sendEvent(Event<T> e) {
 		Future<T> eventFuture = new Future<>(); // the future associated with the event
 		eventFutureMap.put(e,eventFuture); // store the association of the future and the event
-
 		// no microservice to receive event
-		if(!eventReceiveQueues.containsKey(e.getClass())||
-				eventReceiveQueues.get(e.getClass()).isEmpty()){
+		if(!eventReceiveQueues.containsKey(e.getClass()) || eventReceiveQueues.get(e.getClass()).isEmpty()) {
 			return eventFuture;
 		}
 		// Round Robin:
@@ -161,7 +157,7 @@ public class MessageBusImpl implements MessageBus {
 	@Override
 	public void register(MicroService m) {
 		if(isRegistered(m))
-			return;//already registered
+			return; // already registered
 		// Initialize appropriate empty blocking queues
 		messagesMap.put(m,new LinkedBlockingQueue<Message>());
 		subscriptionMap.put(m,new LinkedList<Class<? extends Message>>());
@@ -179,9 +175,8 @@ public class MessageBusImpl implements MessageBus {
 	public void unregister(MicroService m) {
 		messagesMap.remove(m);
 		subscriptionMap.remove(m);
-		eventReceiveQueues.forEach((eventType,receiveQueues)->{
-			// remove microservice from event queue (does nothing if he is not in the queue)
-			receiveQueues.remove(m);
+		eventReceiveQueues.forEach((eventType,receiveQueues)-> {
+			receiveQueues.remove(m); // remove microservice from event queue (does nothing if it is not in the queue)
 		});
 	}
 
@@ -203,7 +198,8 @@ public class MessageBusImpl implements MessageBus {
 	@Override
 	public Message awaitMessage(MicroService m) throws InterruptedException {
 		// checks MicroService is registered to this MessageBus
-		if(!isRegistered(m)) throw new IllegalStateException();
+		if(!isRegistered(m))
+			throw new IllegalStateException();
 		return messagesMap.get(m).take(); // wait until message is available
 	}
 
@@ -212,7 +208,7 @@ public class MessageBusImpl implements MessageBus {
 	 * @param m the MicroService to check
 	 * @return if MicroService is currently register to the MessageBus
 	 */
-	private boolean isRegistered(MicroService m){
+	private boolean isRegistered(MicroService m) {
 		return messagesMap.containsKey(m);
 	}
 }

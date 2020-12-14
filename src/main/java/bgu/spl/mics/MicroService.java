@@ -24,7 +24,7 @@ public abstract class MicroService implements Runnable {
     private final String name;
     private boolean terminate;
     private final MessageBusImpl messageBus;
-    private final HashMap<Class<? extends Message>,Callback> callbackMap;
+    private final HashMap<Class<? extends Message>, Callback> callbackMap; // move it to message-bus with future and callback? - Eden
 
     /**
      * @param name the micro-service name (used mainly for debugging purposes -
@@ -34,7 +34,7 @@ public abstract class MicroService implements Runnable {
     	this.name = name;
     	this.terminate = false;
         this.messageBus = MessageBusImpl.getInstance();
-        this.callbackMap = new HashMap<>();
+        this.callbackMap = new HashMap<>(); // moving? - Eden //////////////////////////////////////////////
     }
 
     /**
@@ -59,8 +59,8 @@ public abstract class MicroService implements Runnable {
      *                 queue.
      */
     protected final <T, E extends Event<T>> void subscribeEvent(Class<E> type, Callback<E> callback) {
-        messageBus.subscribeEvent(type,this);
-        callbackMap.put(type,callback);
+        messageBus.subscribeEvent(type, this);
+        callbackMap.put(type, callback);
     }
 
     /**
@@ -84,8 +84,8 @@ public abstract class MicroService implements Runnable {
      *                 queue.
      */
     protected final <B extends Broadcast> void subscribeBroadcast(Class<B> type, Callback<B> callback) {
-    	messageBus.subscribeBroadcast(type,this);
-        callbackMap.put(type,callback);
+    	messageBus.subscribeBroadcast(type, this);
+        callbackMap.put(type, callback);
     }
 
     /**
@@ -125,7 +125,7 @@ public abstract class MicroService implements Runnable {
      *               {@code e}.
      */
     protected final <T> void complete(Event<T> e, T result) {
-    	this.messageBus.complete(e,result);
+    	this.messageBus.complete(e, result);
     }
 
     /**
@@ -155,25 +155,25 @@ public abstract class MicroService implements Runnable {
      */
     @Override
     public final void run() {
-    	this.messageBus.register(this); //register to MessageBus to receive messages
+    	this.messageBus.register(this); // register to MessageBus to receive messages
         this.initialize(); // e.g derived subscribed to events and broadcasts
-        System.out.println("Finished initialize "+this.name);
-        while (!this.terminate){ // loop until terminate() was called
+        System.out.println("Finished initialize " + this.name);
+        while (!this.terminate) { // loop until terminate() was called
             try {
-                Message m = this.messageBus.awaitMessage(this); //Blocking!!!
+                Message m = this.messageBus.awaitMessage(this); // blocking!!!
                 if(m != null) {
-                    System.out.println(this.name+" got a message");
-                    // get appropriate callback to this type of message
+                    System.out.println(this.name + " got a message");
+                    // get the right callback for this type of message
                     Callback callback = this.callbackMap.get(m.getClass());
-                    callback.call(m); //run appropriate callback function
+                    callback.call(m);
                 }
                 else
                     throw new NullPointerException();
             } catch (InterruptedException e) {
-                System.out.println("Microservice: "+this.name+" was Interrupted");
+                System.out.println("Microservice: " + this.name + " was Interrupted");
                 e.printStackTrace();
             }
-            catch (NullPointerException e){
+            catch (NullPointerException e) {
                 System.out.println("Await message returned null");
                 e.printStackTrace();
             }
@@ -181,5 +181,4 @@ public abstract class MicroService implements Runnable {
         // MicroService was terminated so unregister to MessageBus insure cleanup
         this.messageBus.unregister(this);
     }
-
 }

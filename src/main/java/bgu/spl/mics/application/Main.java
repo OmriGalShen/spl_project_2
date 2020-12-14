@@ -16,15 +16,15 @@ public class Main {
 	public static long startTime=0;
 	public static void main(String[] args) {
 		// <----------input ---------->
-		if(args.length!=2) {
+		if(args.length != 2) {
 			System.out.println("No valid input arguments were given");
 			System.out.println("Please provide valid input.json path and output.json path");
-			return; //exit main
+			return; // exit main
 		}
-		String inputFilePath = args[0]; //input file path from arguments
-		String outputFilePath = args[1];//output file path from arguments
-		Input input=null;
-		try{
+		String inputFilePath = args[0]; // input file path from arguments
+		String outputFilePath = args[1]; // output file path from arguments
+		Input input = null;
+		try {
 			input= getInputFromJson(inputFilePath);
 		}
 		catch (IOException e) {
@@ -81,9 +81,10 @@ public class Main {
 	 * Main program, here threads are declared and run
 	 * @param input used to retrieve input info
 	 */
-	private static void starWars(Input input)
-	{
+	private static void starWars(Input input) {
+
 		System.out.println("A Long time ago in a galaxy far far away...");
+
 		MicroService[] microArray = new MicroService[5];
 		Thread[] threads = new Thread[5];
 		Ewoks ewoks = Ewoks.getInstance(input.getEwoks());
@@ -94,24 +95,26 @@ public class Main {
 		microArray[3] = new LandoMicroservice(input.getLando());
 		microArray[4] = new R2D2Microservice(input.getR2D2());
 
-		for (int i = 0; i < threads.length ; i++) {
+		for (int i=0; i < threads.length; i++) {
 			threads[i] = new Thread(microArray[i]);
 		}
 		startTime = System.currentTimeMillis();
 		for (Thread thread : threads) {
 			thread.start();
 		}
-		try{
+		try {
 			for (Thread thread : threads) {
 				thread.join();
 			}
 		}
-		catch (InterruptedException e){
+		catch (InterruptedException e) {
 			System.out.println("InterruptedException on threads join()");
 			e.printStackTrace();
 		}
+
 		System.out.println("STAR WARS - A NEW HOPE FOR A GOOD SPL PROJECT!");
 		System.out.println("MAY THE FORCE BE WITH YOU");
+
 	}
 }
 

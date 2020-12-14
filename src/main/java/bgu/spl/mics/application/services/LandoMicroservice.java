@@ -1,9 +1,8 @@
 package bgu.spl.mics.application.services;
 
 
-
+//import bgu.spl.mics.application.Main;
 import bgu.spl.mics.MicroService;
-import bgu.spl.mics.application.Main;
 import bgu.spl.mics.application.messages.BombDestroyerEvent;
 import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.passiveObjects.Diary;
@@ -24,17 +23,23 @@ public class LandoMicroservice  extends MicroService {
     @Override
     protected void initialize() {
         this.subscribeEvent(BombDestroyerEvent.class, c -> {
+
             System.out.println("Lando: sending bombs!");
+
             try {
                 Thread.sleep(this.duration);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
             System.out.println("Lando: The empire was destroyed!");
             System.out.println("Lando: time to return home");
+
             this.sendBroadcast(new TerminateBroadcast());
             Diary.getInstance().setLandoTerminate(System.currentTimeMillis());
+
             System.out.println("Lando: I'm done here!");
+
             this.terminate();
         });
     }
