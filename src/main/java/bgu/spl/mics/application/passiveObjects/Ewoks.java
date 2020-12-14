@@ -21,7 +21,7 @@ public class Ewoks {
 
     private Ewoks(int size) {
         this.ewoksList = new ArrayList<>();
-        for (int i=0; i<size; i++) {
+        for (int i=0; i < size; i++) {
             this.ewoksList.add(new Ewok(i));
         }
     }
@@ -45,8 +45,8 @@ public class Ewoks {
             synchronized (Ewoks.class) {
                 if(instance == null)
                     instance = new Ewoks(size);
-            }
-        }
+            } // synchronized
+        } // if
         return instance;
     }
 
@@ -60,9 +60,9 @@ public class Ewoks {
                     System.out.println("InterruptedException on Ewoks acquire()");
                     e.printStackTrace();
                 }
-            }
+            } // while
             ewok.acquire();
-        }
+        } // synchronized
     }
 
     public void release(int serialNumber) {

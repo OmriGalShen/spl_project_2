@@ -178,7 +178,7 @@ public abstract class MicroService implements Runnable {
                 e.printStackTrace();
             }
         }
-        // MicroService was terminated so unregister to MessageBus insure cleanup
+        // microService was terminated so unregister to MessageBus insure cleanup
         this.messageBus.unregister(this);
     }
 }

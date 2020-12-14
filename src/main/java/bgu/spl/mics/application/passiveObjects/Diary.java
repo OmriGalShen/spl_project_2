@@ -41,17 +41,11 @@ public class Diary {
         return instance;
     }
 
-    public void incrementTotalAttacks(){
-        totalAttacks.getAndIncrement();
-    }
+    public void incrementTotalAttacks(){ totalAttacks.getAndIncrement(); }
 
-    public void setHanSoloFinish(long hanSoloFinish) {
-        HanSoloFinish = hanSoloFinish- Main.startTime;
-    }
+    public void setHanSoloFinish(long hanSoloFinish) { HanSoloFinish = hanSoloFinish- Main.startTime; }
 
-    public void setR2D2Deactivate(long r2D2Deactivate) {
-        R2D2Deactivate = r2D2Deactivate- Main.startTime;
-    }
+    public void setR2D2Deactivate(long r2D2Deactivate) { R2D2Deactivate = r2D2Deactivate- Main.startTime; }
 
     public void setC3POFinish(long c3POFinish) {
         C3POFinish = c3POFinish- Main.startTime;

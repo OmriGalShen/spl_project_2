@@ -2,9 +2,9 @@ package bgu.spl.mics.application.services;
 import java.util.Collections;
 import java.util.List;
 
+//import bgu.spl.mics.application.Main;
 //import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.MicroService;
-//import bgu.spl.mics.application.Main;
 import bgu.spl.mics.application.messages.AttackEvent;
 import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.passiveObjects.Diary;
@@ -31,7 +31,7 @@ public class C3POMicroservice extends MicroService {
     protected void initialize() {
         this.subscribeEvent(AttackEvent.class, c -> {
 
-            System.out.println("C3PO: I got an attack to do..");
+            System.out.println("C3PO: I got an attack to do.."); ///////////////////////////////////////////
 
             List<Integer> serials = c.getAttack().getSerials();
             Collections.sort(serials); // prevent deadlock
@@ -47,7 +47,7 @@ public class C3POMicroservice extends MicroService {
                 ewoks.release(serial);
             }
 
-            System.out.println("C3PO: I finished this attack!");
+            System.out.println("C3PO: I finished this attack!"); ///////////////////////////////////////////
 
             Diary.getInstance().setC3POFinish(System.currentTimeMillis());
             Diary.getInstance().incrementTotalAttacks();
@@ -57,10 +57,9 @@ public class C3POMicroservice extends MicroService {
         this.subscribeBroadcast(TerminateBroadcast.class, c -> {
             Diary.getInstance().setC3POTerminate(System.currentTimeMillis());
 
-            System.out.println("C3PO: I'm done here!");
+            System.out.println("C3PO: I'm done here!"); ///////////////////////////////////////////
 
             this.terminate();
         });
-        // ------------------------------------------------------------------
     }
 }

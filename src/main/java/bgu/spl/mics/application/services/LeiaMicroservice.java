@@ -24,10 +24,9 @@ public class LeiaMicroservice extends MicroService {
         this.futures = new Future[attacks.length];
         // -- for each attack create Attack event --
         attackEvents = new AttackEvent[attacks.length];
-        for (int i = 0; i <attacks.length ; i++) {
+        for (int i = 0; i < attacks.length; i++) {
             attackEvents[i] = new AttackEvent(attacks[i]);
         }
-        // ------------------------------------------
     }
 
     @Override
@@ -38,27 +37,26 @@ public class LeiaMicroservice extends MicroService {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        // -------------------------------------
         // --- send attacks ---
         this.sendAttacks();
         // -- send DeactivationEvent to R2D2 --
         this.sendEvent(new DeactivationEvent());
 
-        System.out.println("Leia: I sent DeactivationEvent!");
+        System.out.println("Leia: I sent DeactivationEvent!"); ///////////////////////////////////////////
 
         // -- subscribe to TerminateBroadcast and terminate accordingly --
         this.subscribeBroadcast(TerminateBroadcast.class, c -> {
             Diary.getInstance().setLeiaTerminate(System.currentTimeMillis());
 
-            System.out.println("Leia: I'm done here!");
+            System.out.println("Leia: I'm done here!"); ///////////////////////////////////////////
 
             this.terminate();
         });
-        // ------------------------------------------------------------------
     }
+
     private void sendAttacks() {
 
-        System.out.println("Leia: I'm sending attacks!");
+        System.out.println("Leia: I'm sending attacks!"); ///////////////////////////////////////////
 
         for (int i=0; i < attackEvents.length; i++) {
             // -- for each attack store it's future --
@@ -69,7 +67,7 @@ public class LeiaMicroservice extends MicroService {
             future.get(); // blocking until attack was resolved
         }
 
-        System.out.println("Leia: attacks are done!");
+        System.out.println("Leia: attacks are done!"); ///////////////////////////////////////////
 
     }
 }

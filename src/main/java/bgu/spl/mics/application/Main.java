@@ -26,18 +26,15 @@ public class Main {
 		Input input = null;
 		try {
 			input= getInputFromJson(inputFilePath);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			System.out.println("IOException on input from json file");
 			e.printStackTrace();
 		}
 		if(input == null)
 			throw new NullPointerException("Problem reading input from json");
-		// ---------------------------
 
 		// <--------main program ---------->
 		starWars(input);
-		// --------------------------------
 
 		// <----------output ---------->
 		Diary recordDiary = Diary.getInstance();
@@ -47,8 +44,6 @@ public class Main {
 			System.out.println("IOException on output of Diary to json format");
 			e.printStackTrace();
 		}
-		// -----------------------------
-
 	}
 
 	/**
@@ -83,7 +78,7 @@ public class Main {
 	 */
 	private static void starWars(Input input) {
 
-		System.out.println("A Long time ago in a galaxy far far away...");
+		System.out.println("A Long time ago in a galaxy far far away..."); ///////////////////////////////////////////
 
 		MicroService[] microArray = new MicroService[5];
 		Thread[] threads = new Thread[5];
@@ -106,14 +101,13 @@ public class Main {
 			for (Thread thread : threads) {
 				thread.join();
 			}
-		}
-		catch (InterruptedException e) {
+		} catch (InterruptedException e) {
 			System.out.println("InterruptedException on threads join()");
 			e.printStackTrace();
 		}
 
-		System.out.println("STAR WARS - A NEW HOPE FOR A GOOD SPL PROJECT!");
-		System.out.println("MAY THE FORCE BE WITH YOU");
+		System.out.println("STAR WARS - A NEW HOPE FOR A GOOD SPL PROJECT!"); ////////////////////////////////////////////
+		System.out.println("MAY THE FORCE BE WITH YOU"); //////////////////////////////////////////
 
 	}
 }

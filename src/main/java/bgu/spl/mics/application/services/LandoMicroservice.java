@@ -24,7 +24,7 @@ public class LandoMicroservice  extends MicroService {
     protected void initialize() {
         this.subscribeEvent(BombDestroyerEvent.class, c -> {
 
-            System.out.println("Lando: sending bombs!");
+            System.out.println("Lando: sending bombs!"); ///////////////////////////////////////////
 
             try {
                 Thread.sleep(this.duration);
@@ -32,15 +32,15 @@ public class LandoMicroservice  extends MicroService {
                 e.printStackTrace();
             }
 
-            System.out.println("Lando: The empire was destroyed!");
-            System.out.println("Lando: time to return home");
+            System.out.println("Lando: The empire was destroyed!"); ///////////////////////////////////////////
+            System.out.println("Lando: time to return home"); ///////////////////////////////////////////
 
             this.sendBroadcast(new TerminateBroadcast());
             Diary.getInstance().setLandoTerminate(System.currentTimeMillis());
 
-            System.out.println("Lando: I'm done here!");
+            System.out.println("Lando: I'm done here!"); ///////////////////////////////////////////
 
             this.terminate();
-        });
+        }); // lambda
     }
 }
