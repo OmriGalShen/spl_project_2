@@ -60,6 +60,9 @@ class MessageBusImplTest {
         catch (Exception e){
             fail("awaitMessage thrown Exception");
         }
+        /* unregister methods here were added after unit tests submissions to
+           to prevents problem with singleton MessageBusImp
+         */
         testMessageBus.unregister(testC3PO);
         testMessageBus.unregister(testR2D2);
     }
@@ -90,6 +93,9 @@ class MessageBusImplTest {
         catch (Exception e){
             fail("awaitMessage thrown Exception");
         }
+        /* unregister methods here were added after unit tests submissions to
+           to prevents problem with singleton MessageBusImp
+         */
         testMessageBus.unregister(testC3PO);
         testMessageBus.unregister(testR2D2);
     }
@@ -132,6 +138,9 @@ class MessageBusImplTest {
         catch (IllegalStateException e){
             fail("awaitMessage thrown IllegalStateException");
         }
+        /* unregister methods here were added after unit tests submissions to
+           to prevents problem with singleton MessageBusImp
+         */
         testMessageBus.unregister(testC3PO);
         testMessageBus.unregister(testR2D2);
     }
