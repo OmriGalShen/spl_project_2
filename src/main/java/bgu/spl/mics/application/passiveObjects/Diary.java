@@ -41,9 +41,15 @@ public class Diary {
         return instance;
     }
 
-    public void incrementTotalAttacks(){ totalAttacks.getAndIncrement(); }
+    public void incrementTotalAttacks() { totalAttacks.getAndIncrement(); }
 
-    public void setHanSoloFinish(long hanSoloFinish) { HanSoloFinish = hanSoloFinish- Main.startTime; }
+    public void setHanSoloFinish(long hanSoloFinish) {
+        HanSoloFinish = hanSoloFinish- Main.startTime;
+    }
+
+    public void setHanSoloTerminate(long hanSoloTerminate) {
+        HanSoloTerminate = hanSoloTerminate- Main.startTime;
+    }
 
     public void setR2D2Deactivate(long r2D2Deactivate) { R2D2Deactivate = r2D2Deactivate- Main.startTime; }
 
@@ -51,16 +57,12 @@ public class Diary {
         C3POFinish = c3POFinish- Main.startTime;
     }
 
-    public void setHanSoloTerminate(long hanSoloTerminate) {
-        HanSoloTerminate = hanSoloTerminate- Main.startTime;
+    public void setC3POTerminate(long c3POTerminate) {
+        C3POTerminate = c3POTerminate- Main.startTime;
     }
 
     public void setLeiaTerminate(long leiaTerminate) {
         LeiaTerminate = leiaTerminate- Main.startTime;
-    }
-
-    public void setC3POTerminate(long c3POTerminate) {
-        C3POTerminate = c3POTerminate- Main.startTime;
     }
 
     public void setR2D2Terminate(long r2D2Terminate) {

@@ -33,7 +33,7 @@ public class LeiaMicroservice extends MicroService {
     protected void initialize() {
         // -- wait for attackers to subscribe --
         try {
-            Thread.sleep(5000); // 5 seconds
+            Thread.sleep(100); // 5 seconds
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

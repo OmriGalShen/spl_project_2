@@ -73,7 +73,7 @@ public class Future<T> {
 			return this.result;
 		long timeoutMillis = unit.toMillis(timeout);
 		boolean finished = false;
-		long currentTime=0L; // what is 0L? - Eden ////////////////////////////////////////
+		long currentTime=0L;
 		long deadline = System.currentTimeMillis()+timeoutMillis;
 		while (!finished){
 			if(this.isDone)

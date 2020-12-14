@@ -85,11 +85,11 @@ public class Main {
 		Thread[] threads = new Thread[numberOfMS];
 		Ewoks ewoks = Ewoks.getInstance(input.getEwoks());
 
-		microArray[0] = new LeiaMicroservice(input.getAttacks());
-		microArray[1] = new C3POMicroservice();
-		microArray[2] = new HanSoloMicroservice();
-		microArray[3] = new LandoMicroservice(input.getLando());
-		microArray[4] = new R2D2Microservice(input.getR2D2());
+		microArray[0] = new C3POMicroservice();
+		microArray[1] = new HanSoloMicroservice();
+		microArray[2] = new LandoMicroservice(input.getLando());
+		microArray[3] = new R2D2Microservice(input.getR2D2());
+		microArray[4] = new LeiaMicroservice(input.getAttacks());
 
 		for (int i=0; i < numberOfMS; i++) {
 			threads[i] = new Thread(microArray[i]);

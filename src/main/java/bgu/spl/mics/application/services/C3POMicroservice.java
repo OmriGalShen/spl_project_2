@@ -1,9 +1,5 @@
 package bgu.spl.mics.application.services;
-import java.util.Collections;
-import java.util.List;
 
-//import bgu.spl.mics.application.Main;
-//import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.AttackEvent;
 import bgu.spl.mics.application.messages.TerminateBroadcast;
@@ -33,19 +29,7 @@ public class C3POMicroservice extends MicroService {
 
             System.out.println("C3PO: I got an attack to do.."); ///////////////////////////////////////////
 
-            List<Integer> serials = c.getAttack().getSerials();
-            Collections.sort(serials); // prevent deadlock
-            for(int serial: serials) { // acquire all resources
-                ewoks.acquire(serial); // blocking if ewok not available
-            }
-            try { // all resources were acquired
-                Thread.sleep(c.getAttack().getDuration());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            for(int serial: serials) { // release all resources
-                ewoks.release(serial);
-            }
+            Ewoks.init(c, ewoks);
 
             System.out.println("C3PO: I finished this attack!"); ///////////////////////////////////////////
 
