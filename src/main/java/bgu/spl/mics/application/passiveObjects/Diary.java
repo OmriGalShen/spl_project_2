@@ -17,7 +17,12 @@ public class Diary {
     private long R2D2Deactivate; // timestamp - finished deactivating
     private long LeiaTerminate, HanSoloTerminate,C3POTerminate,R2D2Terminate, LandoTerminate; // timestamp - right before the termination
 
-    private Diary(){
+
+    private static class DiaryHolder { // singleton pattern
+        private static Diary instance = new Diary();
+    }
+
+    private Diary() { // singleton pattern
         totalAttacks = new AtomicInteger(0);
         HanSoloFinish = 0;
         C3POFinish = 0;
@@ -30,17 +35,9 @@ public class Diary {
     }
 
     public static Diary getInstance() { // singleton pattern
-        if(instance == null) {
-            // only on creation of first instance synchronize:
-            // to make sure that only one thread creates the first instance
-            synchronized (Diary.class) {
-                if(instance == null)
-                    instance = new Diary();
-            }
-        }
-        return instance;
+        return DiaryHolder.instance;
     }
-
+    
     public void incrementTotalAttacks() { totalAttacks.getAndIncrement(); }
 
     public void setHanSoloFinish(long hanSoloFinish) {

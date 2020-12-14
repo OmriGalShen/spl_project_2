@@ -142,14 +142,6 @@ public abstract class MicroService implements Runnable {
     }
 
     /**
-     * @return the name of the service - the service name is given to it in the
-     *         construction time and is used mainly for debugging purposes.
-     */
-    public final String getName() {
-        return this.name;
-    }
-
-    /**
      * The entry point of the micro-service. TODO: you must complete this code
      * otherwise you will end up in an infinite loop.
      */
@@ -157,12 +149,16 @@ public abstract class MicroService implements Runnable {
     public final void run() {
     	this.messageBus.register(this); // register to MessageBus to receive messages
         this.initialize(); // e.g derived subscribed to events and broadcasts
-        System.out.println("Finished initialize " + this.name);
+
+        System.out.println("Finished initialize " + this.name); //////////////////////////////////////////////////
+
         while (!this.terminate) { // loop until terminate() was called
             try {
                 Message m = this.messageBus.awaitMessage(this); // blocking!!!
                 if(m != null) {
-                    System.out.println(this.name + " got a message");
+
+                    System.out.println(this.name + " got a message"); /////////////////////////////////////////
+
                     // get the right callback for this type of message
                     Callback callback = this.callbackMap.get(m.getClass());
                     callback.call(m);
@@ -170,15 +166,17 @@ public abstract class MicroService implements Runnable {
                 else
                     throw new NullPointerException();
             } catch (InterruptedException e) {
-                System.out.println("Microservice: " + this.name + " was Interrupted");
+
+                System.out.println("Microservice: " + this.name + " was Interrupted"); ////////////////////////////////////////////
+
                 e.printStackTrace();
             }
             catch (NullPointerException e) {
-                System.out.println("Await message returned null");
                 e.printStackTrace();
+
+                System.out.println("Await message returned null"); //////////////////////////////////////////////////////////
             }
         }
-        // microService was terminated so unregister to MessageBus insure cleanup
-        this.messageBus.unregister(this);
+        this.messageBus.unregister(this); // microService was terminated - unregister from MessageBus
     }
 }

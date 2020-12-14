@@ -1,5 +1,8 @@
 package bgu.spl.mics;
 
+import bgu.spl.mics.application.passiveObjects.Diary;
+
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -16,28 +19,27 @@ public class MessageBusImpl implements MessageBus {
 	private ConcurrentHashMap<MicroService,LinkedList<Class<? extends Message>>> subscriptionMap; // subscriptions queue
 	private ConcurrentHashMap<Event, Future> eventFutureMap; // store associations of events and Future objects
 	private ConcurrentHashMap<Class<? extends Message>, ConcurrentLinkedQueue<MicroService>> eventReceiveQueues; // for each type of event store receiving microservices
+	private final HashMap<Class<? extends Message>, Callback> callbackMap;
 
 	/**
 	 * Private constructor
 	 * Added*
 	 */
+
+	private static class MessageBusImplHolder { // singleton pattern
+		private static MessageBusImpl instance = new MessageBusImpl();
+	}
+
 	private MessageBusImpl() { // singleton pattern
-		messagesMap = new ConcurrentHashMap<>();
-		subscriptionMap = new ConcurrentHashMap<>();
-		eventFutureMap = new ConcurrentHashMap<>();
-		eventReceiveQueues = new ConcurrentHashMap<>();
+		this.messagesMap = new ConcurrentHashMap<>();
+		this.subscriptionMap = new ConcurrentHashMap<>();
+		this.eventFutureMap = new ConcurrentHashMap<>();
+		this.eventReceiveQueues = new ConcurrentHashMap<>();
+		this.callbackMap = new HashMap<>();
 	}
 
 	public static MessageBusImpl getInstance() { // singleton pattern
-		if(instance == null) {
-			// only on creation of first instance synchronize:
-			// to make sure only one thread creates the first instance
-			synchronized (MessageBusImpl.class) {
-				if(instance == null)
-					instance = new MessageBusImpl();
-			}
-		}
-		return instance;
+		return MessageBusImplHolder.instance;
 	}
 
 	/**
