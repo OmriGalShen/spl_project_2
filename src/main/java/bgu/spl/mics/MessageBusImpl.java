@@ -11,15 +11,11 @@ import java.util.concurrent.LinkedBlockingQueue;
  * Only private fields and methods can be added to this class.
  */
 public class MessageBusImpl implements MessageBus {
-	private static MessageBusImpl instance=null; // singleton pattern
-	// for each MicroService store message queue
-	private ConcurrentHashMap<MicroService, LinkedBlockingQueue<Message>> messagesMap;
-	// for each MicroService store subscriptions queue
-	private ConcurrentHashMap<MicroService,LinkedList<Class<? extends Message>>> subscriptionMap;
-	// store associations of events and Future objects
-	private ConcurrentHashMap<Event, Future> eventFutureMap;
-	// for each type of event store receiving microservices
-	private ConcurrentHashMap<Class<? extends Message>, ConcurrentLinkedQueue<MicroService>> eventReceiveQueues;
+	private static MessageBusImpl instance = null; // singleton pattern
+	private ConcurrentHashMap<MicroService, LinkedBlockingQueue<Message>> messagesMap; // store message queue
+	private ConcurrentHashMap<MicroService,LinkedList<Class<? extends Message>>> subscriptionMap; // subscriptions queue
+	private ConcurrentHashMap<Event, Future> eventFutureMap; // store associations of events and Future objects
+	private ConcurrentHashMap<Class<? extends Message>, ConcurrentLinkedQueue<MicroService>> eventReceiveQueues; // for each type of event store receiving microservices
 
 	/**
 	 * Private constructor
@@ -35,7 +31,7 @@ public class MessageBusImpl implements MessageBus {
 	public static MessageBusImpl getInstance() { // singleton pattern
 		if(instance == null) {
 			// only on creation of first instance synchronize:
-			// this is to make sure only one thread creates the first instance
+			// to make sure only one thread creates the first instance
 			synchronized (MessageBusImpl.class) {
 				if(instance == null)
 					instance = new MessageBusImpl();

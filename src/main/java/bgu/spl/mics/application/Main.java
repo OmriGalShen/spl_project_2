@@ -13,7 +13,7 @@ import com.google.gson.*;
  * In the end, you should output a JSON.
  */
 public class Main {
-	public static long startTime=0;
+	public static long startTime=0; // move to diary? or maybe create class Timer? - Eden ////////////////////////////////
 	public static void main(String[] args) {
 		// <----------input ---------->
 		if(args.length != 2) {
@@ -39,7 +39,7 @@ public class Main {
 		// <----------output ---------->
 		Diary recordDiary = Diary.getInstance();
 		try {
-			diaryToJson(outputFilePath,recordDiary);
+			diaryToJson(outputFilePath, recordDiary);
 		} catch (IOException e) {
 			System.out.println("IOException on output of Diary to json format");
 			e.printStackTrace();
@@ -80,8 +80,9 @@ public class Main {
 
 		System.out.println("A Long time ago in a galaxy far far away..."); ///////////////////////////////////////////
 
-		MicroService[] microArray = new MicroService[5];
-		Thread[] threads = new Thread[5];
+		int numberOfMS = 5;
+		MicroService[] microArray = new MicroService[numberOfMS];
+		Thread[] threads = new Thread[numberOfMS];
 		Ewoks ewoks = Ewoks.getInstance(input.getEwoks());
 
 		microArray[0] = new LeiaMicroservice(input.getAttacks());
@@ -90,7 +91,7 @@ public class Main {
 		microArray[3] = new LandoMicroservice(input.getLando());
 		microArray[4] = new R2D2Microservice(input.getR2D2());
 
-		for (int i=0; i < threads.length; i++) {
+		for (int i=0; i < numberOfMS; i++) {
 			threads[i] = new Thread(microArray[i]);
 		}
 		startTime = System.currentTimeMillis();
@@ -108,7 +109,6 @@ public class Main {
 
 		System.out.println("STAR WARS - A NEW HOPE FOR A GOOD SPL PROJECT!"); ////////////////////////////////////////////
 		System.out.println("MAY THE FORCE BE WITH YOU"); //////////////////////////////////////////
-
 	}
 }
 

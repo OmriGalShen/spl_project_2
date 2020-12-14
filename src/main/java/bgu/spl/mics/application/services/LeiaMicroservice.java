@@ -16,7 +16,7 @@ import bgu.spl.mics.application.passiveObjects.Diary;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class LeiaMicroservice extends MicroService {
-	private Future[] futures; // for each attack store it's future
+	private Future[] futures; // store it's future for each attack
 	private AttackEvent[] attackEvents; // for each attack create AttackEvent
 	
     public LeiaMicroservice(Attack[] attacks) {
@@ -24,7 +24,7 @@ public class LeiaMicroservice extends MicroService {
         this.futures = new Future[attacks.length];
         // -- for each attack create Attack event --
         attackEvents = new AttackEvent[attacks.length];
-        for (int i = 0; i < attacks.length; i++) {
+        for (int i=0; i < attacks.length; i++) {
             attackEvents[i] = new AttackEvent(attacks[i]);
         }
     }
@@ -68,6 +68,5 @@ public class LeiaMicroservice extends MicroService {
         }
 
         System.out.println("Leia: attacks are done!"); ///////////////////////////////////////////
-
     }
 }
