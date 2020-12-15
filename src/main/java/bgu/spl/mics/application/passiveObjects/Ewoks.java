@@ -43,8 +43,6 @@ public class Ewoks {
 
 
 
-
-
     public boolean isAvailable(int serial) {
         return (serial >= ewoksList.size()-1 || !ewoksList.get(serial-1).isAvailable());
     }
@@ -76,11 +74,13 @@ public class Ewoks {
         } // for
     }
 
-    public synchronized void releaseEwoks(List<Integer> serialNumbers) {
+    public void releaseEwoks(List<Integer> serialNumbers) {
         for (Integer serial : serialNumbers) {
             release(serial);
         }
-        notifyAll(); // give waiting thread opportunity to catch the released Ewok
+        synchronized (lock) {
+            notifyAll(); // give waiting thread opportunity to catch the released Ewok
+        }
     }
 
     public static void initHanSoloAndC3P0(AttackEvent c, Ewoks ewoks) { // to spare code duplications
