@@ -3,6 +3,7 @@ import bgu.spl.mics.application.messages.AttackEvent;
 import java.util.*;
 
 
+
 /**
  * Passive object representing the resource manager.
  * <p>
@@ -34,35 +35,56 @@ public class Ewoks {
     }
 
 
-    public boolean isAvailable(int num) {
-        return (num >= ewoksList.size() - 1 || !ewoksList.get(num - 1).isAvailable());
+    public boolean isAvailable(int serial) {
+        return (serial >= ewoksList.size()-1 || !ewoksList.get(serial-1).isAvailable());
     }
 
     public synchronized void acquire(int serialNumber) {
         if(serialNumber < ewoksList.size())
-            ewoksList.get(serialNumber - 1).acquire();
+            ewoksList.get(serialNumber-1).acquire();
     }
 
     public void release(int serialNumber) { // it doesn't need to be synchronized (the only way to get here is thru a synchronized method)
         if(serialNumber < ewoksList.size()) {
-            ewoksList.get(serialNumber - 1).release();
+            ewoksList.get(serialNumber-1).release();
         }
     }
 
     public void acquireEwoks(List <Integer> serialNumbers) { // it doesn't need to be synchronized (the acquire of an ewok is synchronized)
+        Collections.sort(serialNumbers);
         for (Integer serial : serialNumbers) {
             while (!isAvailable(serial)) {
                 try {
                     this.wait(); // blocking!!
                 } catch (InterruptedException e) {
-                    System.out.println("InterruptedException on Ewoks acquire()");
                     e.printStackTrace();
                 }
             } // while
             acquire(serial);
+/*
+            while (!getAll(serialNumbers)){
+                try {
+                    this.wait(); // blocking!!
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            serialNumbers.forEach(i -> {
+            });
+            System.out.println("-----------------------------------------------" + serial + "------------------------------------------------------");
+ */
         } // for
     }
 
+/*
+    private synchronized boolean getAll(List<Integer> serialNumbers) {
+        for (int serial : serialNumbers) {
+            if(!isAvailable(serial))
+                return false;
+        }
+        return true;
+    }
+*/
     public synchronized void releaseEwoks(List<Integer> serialNumbers) {
         for (Integer serial : serialNumbers) {
             release(serial);
