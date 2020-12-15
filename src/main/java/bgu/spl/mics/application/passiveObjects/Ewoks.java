@@ -34,10 +34,24 @@ public class Ewoks {
     }
 
 
+    public boolean isAvailable(int num) {
+        return (num >= ewoksList.size() - 1 || !ewoksList.get(num - 1).isAvailable());
+    }
 
-    public synchronized void acquireEwoks(List <Integer> serial) {
-        for (Integer ewok : serial) {
-            while (!isAvailable(ewok)) {
+    public void acquire(int serialNumber) { // it doesn't need to be synchronized (the only way to get here is thru a synchronized method)
+        if(serialNumber < ewoksList.size())
+            ewoksList.get(serialNumber - 1).acquire();
+    }
+
+    public void release(int serialNumber) { // it doesn't need to be synchronized (the only way to get here is thru a synchronized method)
+        if(serialNumber < ewoksList.size()) {
+            ewoksList.get(serialNumber - 1).release();
+        }
+    }
+
+    public synchronized void acquireEwoks(List <Integer> serialNumbers) {
+        for (Integer serial : serialNumbers) {
+            while (!isAvailable(serial)) {
                 try {
                     this.wait(); // blocking!!
                 } catch (InterruptedException e) {
@@ -45,43 +59,25 @@ public class Ewoks {
                     e.printStackTrace();
                 }
             } // while
-            acquire(ewok);
+            acquire(serial);
         } // for
     }
 
-    public boolean isAvailable(int num) {
-        return (num >= ewoksList.size() - 1 || !ewoksList.get(num - 1).isAvailable());
-    }
-
-    public void acquire(int serialNumber) {
-        if(serialNumber < ewoksList.size()) {
-            Ewok ewok = ewoksList.get(serialNumber - 1);
-            ewok.acquire();
+    public synchronized void releaseEwoks(List<Integer> serialNumbers) {
+        for (Integer serial : serialNumbers) {
+            release(serial);
         }
-    }
-
-    public void release(int serialNumber) {
-        if(serialNumber < ewoksList.size()) {
-            Ewok ewok = ewoksList.get(serialNumber - 1);
-            ewok.release();
-            synchronized (lock) {
-                notifyAll(); // give waiting thread opportunity to catch the released Ewok
-            }
-        }
+        notifyAll(); // give waiting thread opportunity to catch the released Ewok
     }
 
     public static void initHanSoloAndC3P0(AttackEvent c, Ewoks ewoks) { // to spare code duplications
         List<Integer> serialNumbers = c.getAttack().getSerials();
-        //for(int serial: serialNumbers) { // acquire all resources
-        ewoks.acquireEwoks(serialNumbers); // blocking if ewok not available
-
+        ewoks.acquireEwoks(serialNumbers);
         try { // all resources were acquired
             Thread.sleep(c.getAttack().getDuration());
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        for(int serial: serialNumbers) { // release all resources
-            ewoks.release(serial);
-        }
+        ewoks.releaseEwoks(serialNumbers);
     }
 }
