@@ -26,9 +26,9 @@ public class Ewoks {
         this.ewoksList = new ArrayList<>(0);
     }
 
-    public static Ewoks getInstance() { // singleton pattern
-        return Ewoks.EwoksHolder.instance;
-    }
+//    public static Ewoks getInstance() { // singleton pattern
+//        return Ewoks.EwoksHolder.instance;
+//   }
 
     private Ewoks(int size) { // what is this for? - Eden ///////////////////////////////////////////////
         this.ewoksList = new ArrayList<>();
@@ -37,7 +37,7 @@ public class Ewoks {
         }
     }
 
-/*    public static Ewoks getInstance() { // singleton pattern
+    public static Ewoks getInstance() { // singleton pattern
         if(instance == null) {
             // only on creation of first instance synchronize:
             // this is to make sure only one thread creates the first instance
@@ -48,7 +48,7 @@ public class Ewoks {
         }
         return instance;
     }
-*/
+
 
     public static Ewoks getInstance(int size) { // singleton pattern
         if(instance == null) {
