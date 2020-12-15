@@ -127,7 +127,7 @@ public class MessageBusImpl implements MessageBus {
 	 * 	       null in case no micro-service has subscribed to {@code e.getClass()}.
 	 */
 	@Override
-	public <T> Future<T> sendEvent(Event<T> e) {
+	public synchronized  <T> Future<T> sendEvent(Event<T> e) {
 		if(!(eventReceiveQueues.containsKey(e.getClass()) || eventReceiveQueues.get(e.getClass()).isEmpty()))
 			return null; // there is no microservice to receive event
 

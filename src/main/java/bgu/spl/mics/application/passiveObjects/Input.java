@@ -21,23 +21,4 @@ public class Input {
 	public Attack[] getAttacks() {
 		return attacks;
 	}
-
-
-/*
-	public void setEwoks(int ewoks) {
-		Ewoks = ewoks;
-	}
-
-	public void setLando(long lando) {
-		Lando = lando;
-	}
-
-	public void setR2D2(long r2d2) {
-		R2D2 = r2d2;
-	}
-
-	public void setAttacks(Attack[] attacks) {
-		this.attacks = attacks;
-	}
- */
 }
