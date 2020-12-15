@@ -19,7 +19,7 @@ public class MessageBusImpl implements MessageBus {
 	private ConcurrentHashMap<MicroService,LinkedList<Class<? extends Message>>> subscriptionMap; // subscriptions queue
 	private ConcurrentHashMap<Event, Future> eventFutureMap; // store associations of events and Future objects
 	private ConcurrentHashMap<Class<? extends Message>, ConcurrentLinkedQueue<MicroService>> eventReceiveQueues; // for each type of event store receiving microservices
-	private final HashMap<Class<? extends Message>, Callback> callbackMap; // Eden //////////////////////////////////////////////////////////////////
+	//private final HashMap<Class<? extends Message>, Callback> callbackMap; // Eden //////////////////////////////////////////////////////////////////
 
 	/**
 	 * Private constructor
@@ -35,7 +35,7 @@ public class MessageBusImpl implements MessageBus {
 		this.subscriptionMap = new ConcurrentHashMap<>();
 		this.eventFutureMap = new ConcurrentHashMap<>();
 		this.eventReceiveQueues = new ConcurrentHashMap<>();
-		this.callbackMap = new HashMap<>(); // Eden ///////////////////////////////////////////////////////////////////
+		//this.callbackMap = new HashMap<>(); // Eden ///////////////////////////////////////////////////////////////////
 	}
 
 	public static MessageBusImpl getInstance() { // singleton pattern
