@@ -13,7 +13,6 @@ import com.google.gson.*;
  * In the end, you should output a JSON.
  */
 public class Main {
-	public static long startTime=0; // move to diary? or maybe create class Timer? - Eden ////////////////////////////////
 	public static void main(String[] args) {
 		// <----------input ---------->
 		if(args.length != 2) {
@@ -94,7 +93,6 @@ public class Main {
 		for (int i=0; i < numberOfMS; i++) {
 			threads[i] = new Thread(microArray[i]);
 		}
-		startTime = System.currentTimeMillis();
 		for (Thread thread : threads) {
 			thread.start();
 		}
