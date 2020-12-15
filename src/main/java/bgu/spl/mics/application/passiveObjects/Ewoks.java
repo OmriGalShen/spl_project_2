@@ -38,7 +38,7 @@ public class Ewoks {
         return (num >= ewoksList.size() - 1 || !ewoksList.get(num - 1).isAvailable());
     }
 
-    public void acquire(int serialNumber) { // it doesn't need to be synchronized (the only way to get here is thru a synchronized method)
+    public synchronized void acquire(int serialNumber) {
         if(serialNumber < ewoksList.size())
             ewoksList.get(serialNumber - 1).acquire();
     }
@@ -49,7 +49,7 @@ public class Ewoks {
         }
     }
 
-    public synchronized void acquireEwoks(List <Integer> serialNumbers) {
+    public void acquireEwoks(List <Integer> serialNumbers) { // it doesn't need to be synchronized (the acquire of an ewok is synchronized)
         for (Integer serial : serialNumbers) {
             while (!isAvailable(serial)) {
                 try {
