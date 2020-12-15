@@ -21,26 +21,16 @@ public class Ewoks {
         private static Ewoks instance = new Ewoks(0);
     }
 
-    // ------ empty constructor ------
-    private Ewoks() { // singleton pattern
-        this.ewoksList = new ArrayList<>();
-    }
-
-    public static Ewoks getInstance() { // singleton pattern
-        return EwoksHolder.instance;
-    }
-
-    // ------ constructor according to size ------
-    private Ewoks(int size) {
+    private Ewoks(int size) { // constructor according to the size
         this.ewoksList = new ArrayList<>();
         for (int i=0; i < size; i++) {
             this.ewoksList.add(new Ewok(i));
         }
     }
 
-//    public static Ewoks getInstance(int size) { // singleton pattern
-//        return EwoksHolder.instance;
-//    }
+    public static Ewoks getInstance() { // singleton pattern
+        return EwoksHolder.instance;
+    }
 
 
 
@@ -73,7 +63,7 @@ public class Ewoks {
 
     public static void initHanSoloAndC3P0(AttackEvent c, Ewoks ewoks) { // to spare code duplications
         List<Integer> serials = c.getAttack().getSerials();
-        Collections.sort(serials); // prevent deadlock
+        //Collections.sort(serials); // prevent deadlock - Omri   is it still needed? - Eden //////////////////////////////////////
         for(int serial: serials) { // acquire all resources
             ewoks.acquire(serial); // blocking if ewok not available
         }
