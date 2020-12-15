@@ -154,8 +154,7 @@ public class MessageBusImpl implements MessageBus {
 	 */
 	@Override
 	public void register(MicroService m) {
-		if(!isRegistered(m)) {
-			// Initialize appropriate empty blocking queues
+		if(!isRegistered(m)) { // Initialize appropriate empty blocking queues
 			messagesMap.put(m, new LinkedBlockingQueue<Message>());
 			subscriptionMap.put(m, new LinkedList<Class<? extends Message>>());
 		}
