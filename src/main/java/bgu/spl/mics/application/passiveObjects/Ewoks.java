@@ -35,31 +35,40 @@ public class Ewoks {
 
 
 
-
-    public void acquireEwoks(List <Integer> serial) {
+    public synchronized void acquireEwoks(List <Integer> serial) {
         int currEwok;
-        for (Integer integer : serial) {
-            currEwok = integer;
-            while (!isAvailable(currEwok)) {
-                synchronized (lock) {
-                    try {
-                        wait(); // blocking!!
-                    } catch (InterruptedException e) {
-                        System.out.println("InterruptedException on Ewoks acquire()");
-                        e.printStackTrace();
-                    } //catch
-                } // synchronized
+//        while (!areAvailable(serial)){ // waiting until **all** the ewoks in the list are available
+//            try {
+//                this.wait();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
+        // ----- all the ewoks we need are now available! -----
+        for (Integer ewok : serial) {
+            while (!isAvailable(ewok)) {
+                try {
+                    this.wait(); // blocking!!
+                } catch (InterruptedException e) {
+                    System.out.println("InterruptedException on Ewoks acquire()");
+                    e.printStackTrace();
+                }
             } // while
-            acquire(currEwok);
-        } // while
-    } // while
-
-    public boolean isAvailable(int num) {
-        Ewok ewok = ewoksList.get(num-1);
-        if (ewok != null)
-            return ewok.isAvailable();
-        return false;
+            acquire(ewok);
+        } // for
     }
+
+    public synchronized boolean isAvailable(int num) {
+        return ((num < ewoksList.size()-1) && ewoksList.get(num - 1).isAvailable());
+    }
+
+//    public synchronized boolean areAvailable(List <Integer> serial) {
+//        for (Integer num : serial) {
+//            if((num<serial.size()-1) && (!ewoksList.get(num-1).isAvailable())) // an ewok we need is not available
+//                return false;
+//        }
+//        return true;
+//    }
 
     public void acquire(int serialNumber) {
         if(serialNumber < ewoksList.size()) {
@@ -80,9 +89,9 @@ public class Ewoks {
 
     public static void initHanSoloAndC3P0(AttackEvent c, Ewoks ewoks) { // to spare code duplications
         List<Integer> serialNumbers = c.getAttack().getSerials();
-        for(int serial: serialNumbers) { // acquire all resources
-            ewoks.acquire(serial); // blocking if ewok not available
-        }
+        //for(int serial: serialNumbers) { // acquire all resources
+        ewoks.acquireEwoks(serialNumbers); // blocking if ewok not available
+
         try { // all resources were acquired
             Thread.sleep(c.getAttack().getDuration());
         } catch (InterruptedException e) {
