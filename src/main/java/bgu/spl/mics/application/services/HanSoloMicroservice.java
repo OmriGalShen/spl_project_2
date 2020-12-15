@@ -31,7 +31,7 @@ public class HanSoloMicroservice extends MicroService {
 
             System.out.println("Han: I got an attack to do.."); ///////////////////////////////////////////
 
-            Ewoks.init(c, ewoks);
+            Ewoks.initHanSoloAndC3P0(c, ewoks); // a method that sets the Attacks and Ewoks for the micro service //////////////////////
             System.out.println("Han: I finished this attack!"); ///////////////////////////////////////////
 
             Diary.getInstance().setHanSoloFinish(System.currentTimeMillis());
