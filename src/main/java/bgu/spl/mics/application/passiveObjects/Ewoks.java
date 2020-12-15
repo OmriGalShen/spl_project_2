@@ -62,9 +62,9 @@ public class Ewoks {
     }
 
     public static void initHanSoloAndC3P0(AttackEvent c, Ewoks ewoks) { // to spare code duplications
-        List<Integer> serials = c.getAttack().getSerials();
+        List<Integer> serialNumbers = c.getAttack().getSerials();
         //Collections.sort(serials); // prevent deadlock - Omri   is it still needed? - Eden //////////////////////////////////////
-        for(int serial: serials) { // acquire all resources
+        for(int serial: serialNumbers) { // acquire all resources
             ewoks.acquire(serial); // blocking if ewok not available
         }
         try { // all resources were acquired
@@ -72,7 +72,7 @@ public class Ewoks {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        for(int serial: serials) { // release all resources
+        for(int serial: serialNumbers) { // release all resources
             ewoks.release(serial);
         }
     }
