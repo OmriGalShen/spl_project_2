@@ -14,21 +14,23 @@ import java.util.concurrent.ConcurrentHashMap;
  * You can add ONLY private methods and fields to this class.
  */
 public class Ewoks {
-    private static Ewoks instance = null; // singleton pattern
+    private static final Ewoks instance = null; // may be final? - Eden //////////////////////////////////////////////
     private final ArrayList<Ewok> ewoksList; // may be final? - Eden //////////////////////////////////////////////
 
     private static class EwoksHolder { // singleton pattern
         private static Ewoks instance = new Ewoks(0);
     }
 
+    // ------ empty constructor ------
     private Ewoks() { // singleton pattern
         this.ewoksList = new ArrayList<>();
     }
 
     public static Ewoks getInstance() { // singleton pattern
         return EwoksHolder.instance;
-   }
+    }
 
+    // ------ constructor according to size ------
     private Ewoks(int size) {
         this.ewoksList = new ArrayList<>();
         for (int i=0; i < size; i++) {
@@ -36,18 +38,11 @@ public class Ewoks {
         }
     }
 
+//    public static Ewoks getInstance(int size) { // singleton pattern
+//        return EwoksHolder.instance;
+//    }
 
-    public static Ewoks getInstance(int size) { // singleton pattern
-        if(instance == null) {
-            // only on creation of first instance synchronize:
-            // this is to make sure only one thread creates the first instance
-            synchronized (Ewoks.class) {
-                if(instance == null)
-                    instance = new Ewoks(size);
-            } // synchronized
-        } // if
-        return instance;
-    }
+
 
     public void acquire(int serialNumber) {
         if (serialNumber < ewoksList.size()) {
