@@ -26,12 +26,12 @@ public class R2D2Microservice extends MicroService {
     protected void initialize() {
         this.subscribeEvent(DeactivationEvent.class, c -> {
 
-            System.out.println("R2D2: Deactivating the shields!");
+            System.out.println("R2D2: Deactivating the shields!"); ///////////////////////////////////////////
 
             try {
                 Thread.sleep(this.duration);
 
-                System.out.println("R2D2: requesting Bomb Destroyer! ");
+                System.out.println("R2D2: requesting Bomb Destroyer! "); ///////////////////////////////////////////
 
                 this.sendEvent(new BombDestroyerEvent());
             } catch (InterruptedException e) {
@@ -43,10 +43,9 @@ public class R2D2Microservice extends MicroService {
         this.subscribeBroadcast(TerminateBroadcast.class, c -> {
             Diary.getInstance().setR2D2Terminate(System.currentTimeMillis());
 
-            System.out.println("R2D2: I'm done here!");
+            System.out.println("R2D2: I'm done here!"); ///////////////////////////////////////////
 
             this.terminate();
         });
-        // ------------------------------------------------------------------
     }
 }

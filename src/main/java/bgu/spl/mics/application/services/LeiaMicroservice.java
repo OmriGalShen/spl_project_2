@@ -16,7 +16,7 @@ import bgu.spl.mics.application.passiveObjects.Diary;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class LeiaMicroservice extends MicroService {
-	private Future[] futures; // for each attack store it's future
+	private Future[] futures; // store it's future for each attack
 	private AttackEvent[] attackEvents; // for each attack create AttackEvent
 	
     public LeiaMicroservice(Attack[] attacks) {
@@ -24,41 +24,39 @@ public class LeiaMicroservice extends MicroService {
         this.futures = new Future[attacks.length];
         // -- for each attack create Attack event --
         attackEvents = new AttackEvent[attacks.length];
-        for (int i = 0; i <attacks.length ; i++) {
+        for (int i=0; i < attacks.length; i++) {
             attackEvents[i] = new AttackEvent(attacks[i]);
         }
-        // ------------------------------------------
     }
 
     @Override
     protected void initialize() {
         // -- wait for attackers to subscribe --
         try {
-            Thread.sleep(5000); // 5 seconds
+            Thread.sleep(100); // 5 seconds
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        // -------------------------------------
         // --- send attacks ---
         this.sendAttacks();
         // -- send DeactivationEvent to R2D2 --
         this.sendEvent(new DeactivationEvent());
 
-        System.out.println("Leia: I sent DeactivationEvent!");
+        System.out.println("Leia: I sent DeactivationEvent!"); ///////////////////////////////////////////
 
         // -- subscribe to TerminateBroadcast and terminate accordingly --
         this.subscribeBroadcast(TerminateBroadcast.class, c -> {
             Diary.getInstance().setLeiaTerminate(System.currentTimeMillis());
 
-            System.out.println("Leia: I'm done here!");
+            System.out.println("Leia: I'm done here!"); ///////////////////////////////////////////
 
             this.terminate();
         });
-        // ------------------------------------------------------------------
     }
+
     private void sendAttacks() {
 
-        System.out.println("Leia: I'm sending attacks!");
+        System.out.println("Leia: I'm sending attacks!"); ///////////////////////////////////////////
 
         for (int i=0; i < attackEvents.length; i++) {
             // -- for each attack store it's future --
@@ -69,7 +67,6 @@ public class LeiaMicroservice extends MicroService {
             future.get(); // blocking until attack was resolved
         }
 
-        System.out.println("Leia: attacks are done!");
-
+        System.out.println("Leia: attacks are done!"); ///////////////////////////////////////////
     }
 }

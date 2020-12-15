@@ -13,7 +13,7 @@ import com.google.gson.*;
  * In the end, you should output a JSON.
  */
 public class Main {
-	public static long startTime=0;
+	public static long startTime=0; // move to diary? or maybe create class Timer? - Eden ////////////////////////////////
 	public static void main(String[] args) {
 		// <----------input ---------->
 		if(args.length != 2) {
@@ -26,29 +26,24 @@ public class Main {
 		Input input = null;
 		try {
 			input= getInputFromJson(inputFilePath);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			System.out.println("IOException on input from json file");
 			e.printStackTrace();
 		}
 		if(input == null)
 			throw new NullPointerException("Problem reading input from json");
-		// ---------------------------
 
 		// <--------main program ---------->
 		starWars(input);
-		// --------------------------------
 
 		// <----------output ---------->
 		Diary recordDiary = Diary.getInstance();
 		try {
-			diaryToJson(outputFilePath,recordDiary);
+			diaryToJson(outputFilePath, recordDiary);
 		} catch (IOException e) {
 			System.out.println("IOException on output of Diary to json format");
 			e.printStackTrace();
 		}
-		// -----------------------------
-
 	}
 
 	/**
@@ -83,19 +78,20 @@ public class Main {
 	 */
 	private static void starWars(Input input) {
 
-		System.out.println("A Long time ago in a galaxy far far away...");
+		System.out.println("A Long time ago in a galaxy far far away..."); ///////////////////////////////////////////
 
-		MicroService[] microArray = new MicroService[5];
-		Thread[] threads = new Thread[5];
+		int numberOfMS = 5;
+		MicroService[] microArray = new MicroService[numberOfMS];
+		Thread[] threads = new Thread[numberOfMS];
 		Ewoks ewoks = Ewoks.getInstance(input.getEwoks());
 
-		microArray[0] = new LeiaMicroservice(input.getAttacks());
-		microArray[1] = new C3POMicroservice();
-		microArray[2] = new HanSoloMicroservice();
-		microArray[3] = new LandoMicroservice(input.getLando());
-		microArray[4] = new R2D2Microservice(input.getR2D2());
+		microArray[0] = new C3POMicroservice();
+		microArray[1] = new HanSoloMicroservice();
+		microArray[2] = new LandoMicroservice(input.getLando());
+		microArray[3] = new R2D2Microservice(input.getR2D2());
+		microArray[4] = new LeiaMicroservice(input.getAttacks());
 
-		for (int i=0; i < threads.length; i++) {
+		for (int i=0; i < numberOfMS; i++) {
 			threads[i] = new Thread(microArray[i]);
 		}
 		startTime = System.currentTimeMillis();
@@ -106,15 +102,13 @@ public class Main {
 			for (Thread thread : threads) {
 				thread.join();
 			}
-		}
-		catch (InterruptedException e) {
+		} catch (InterruptedException e) {
 			System.out.println("InterruptedException on threads join()");
 			e.printStackTrace();
 		}
 
-		System.out.println("STAR WARS - A NEW HOPE FOR A GOOD SPL PROJECT!");
-		System.out.println("MAY THE FORCE BE WITH YOU");
-
+		System.out.println("STAR WARS - A NEW HOPE FOR A GOOD SPL PROJECT!"); ////////////////////////////////////////////
+		System.out.println("MAY THE FORCE BE WITH YOU"); //////////////////////////////////////////
 	}
 }
 
