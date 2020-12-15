@@ -51,6 +51,8 @@ public class Ewoks {
     }
 
     public void acquire(int serialNumber) {
+        if(serialNumber >= ewoksList.size())
+            return;
         Ewok ewok = ewoksList.get(serialNumber-1);
         synchronized (this) {
             while (!ewok.available) {
@@ -66,6 +68,8 @@ public class Ewoks {
     }
 
     public void release(int serialNumber) {
+        if(serialNumber >= ewoksList.size())
+            return;
         Ewok ewok = ewoksList.get(serialNumber-1);
         ewok.release();
         synchronized (this) {
