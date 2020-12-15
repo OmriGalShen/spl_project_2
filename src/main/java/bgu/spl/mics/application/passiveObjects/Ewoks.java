@@ -18,6 +18,15 @@ public class Ewoks {
     private Boolean lock;
 
 
+    private Ewoks(int size, Boolean lock) { // constructor according to the size
+        this.ewoksList = new ArrayList<>();
+        for (int i=0; i < size; i++) {
+            this.ewoksList.add(new Ewok(i));
+        }
+        this.lock = lock;
+    }
+
+
     public static Ewoks getInstance(int size){ //Singleton pattern
         if(instance == null){
             //only on creation of first instance synchronize:
@@ -28,22 +37,13 @@ public class Ewoks {
     }
 
 
-//    private static class EwoksHolder { // singleton pattern
-//        private static Ewoks instance = new Ewoks(0, true);
-//    }
-
-    private Ewoks(int size, Boolean lock) { // constructor according to the size
-        System.out.println("-------------------------------------------------------" + size);
-        this.ewoksList = new ArrayList<>();
-        for (int i=0; i < size; i++) {
-            this.ewoksList.add(new Ewok(i));
-        }
-        this.lock = lock;
-    }
-
-    public static Ewoks getInstance() { // singleton pattern
+    public static synchronized Ewoks getInstance() { // singleton pattern
         return instance;
     }
+
+
+
+
 
     public boolean isAvailable(int serial) {
         return (serial >= ewoksList.size()-1 || !ewoksList.get(serial-1).isAvailable());
@@ -73,30 +73,9 @@ public class Ewoks {
                 }
             } // while
             acquire(serial);
-/*
-            while (!getAll(serialNumbers)){
-                try {
-                    this.wait(); // blocking!!
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            serialNumbers.forEach(i -> {
-            });
-            System.out.println("-----------------------------------------------" + serial + "------------------------------------------------------");
- */
         } // for
     }
 
-/*
-    private synchronized boolean getAll(List<Integer> serialNumbers) {
-        for (int serial : serialNumbers) {
-            if(!isAvailable(serial))
-                return false;
-        }
-        return true;
-    }
-*/
     public synchronized void releaseEwoks(List<Integer> serialNumbers) {
         for (Integer serial : serialNumbers) {
             release(serial);
