@@ -14,11 +14,11 @@ import java.util.concurrent.LinkedBlockingQueue;
  * Only private fields and methods can be added to this class.
  */
 public class MessageBusImpl implements MessageBus {
-	private static MessageBusImpl instance = null; // singleton pattern
-	private ConcurrentHashMap<MicroService, LinkedBlockingQueue<Message>> messagesMap; // store message queue
-	private ConcurrentHashMap<MicroService,LinkedList<Class<? extends Message>>> subscriptionMap; // subscriptions queue
-	private ConcurrentHashMap<Event, Future> eventFutureMap; // store associations of events and Future objects
-	private ConcurrentHashMap<Class<? extends Message>, ConcurrentLinkedQueue<MicroService>> eventReceiveQueues; // for each type of event store receiving microservices
+	private static final MessageBusImpl instance = null; // singleton pattern
+	private final ConcurrentHashMap<MicroService, LinkedBlockingQueue<Message>> messagesMap; // store message queue
+	private final ConcurrentHashMap<MicroService,LinkedList<Class<? extends Message>>> subscriptionMap; // subscriptions queue
+	private final ConcurrentHashMap<Event, Future> eventFutureMap; // store associations of events and Future objects
+	private final ConcurrentHashMap<Class<? extends Message>, ConcurrentLinkedQueue<MicroService>> eventReceiveQueues; // for each type of event store receiving microservices
 	//private final HashMap<Class<? extends Message>, Callback> callbackMap; // Eden //////////////////////////////////////////////////////////////////
 
 	/**
@@ -27,7 +27,7 @@ public class MessageBusImpl implements MessageBus {
 	 */
 
 	private static class MessageBusImplHolder { // singleton pattern
-		private static MessageBusImpl instance = new MessageBusImpl();
+		private static final MessageBusImpl instance = new MessageBusImpl();
 	}
 
 	private MessageBusImpl() { // singleton pattern
@@ -84,7 +84,7 @@ public class MessageBusImpl implements MessageBus {
 	 * @param e      The completed event.
 	 * @param result The resolved result of the completed event.
 	 */
-	@Override @SuppressWarnings("unchecked")
+	@Override
 	public <T> void complete(Event<T> e, T result) {
 		if(eventFutureMap.containsKey(e)&&eventFutureMap.get(e) != null) {
 			eventFutureMap.get(e).resolve(result);
@@ -158,8 +158,8 @@ public class MessageBusImpl implements MessageBus {
 	@Override
 	public void register(MicroService m) {
 		if(!isRegistered(m)) { // initialize appropriate empty blocking queues
-			messagesMap.put(m, new LinkedBlockingQueue<Message>());
-			subscriptionMap.put(m, new LinkedList<Class<? extends Message>>());
+			messagesMap.put(m, new LinkedBlockingQueue<>());
+			subscriptionMap.put(m, new LinkedList<>());
 		}
 	}
 
