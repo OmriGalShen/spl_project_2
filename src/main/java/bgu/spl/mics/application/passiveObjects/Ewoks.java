@@ -22,21 +22,20 @@ public class Ewoks {
     }
 
     private Ewoks(int size, Boolean lock) { // constructor according to the size
-        System.out.println(size);
         this.ewoksList = new ArrayList<>();
         for (int i=0; i < size; i++) {
             this.ewoksList.add(new Ewok(i));
         }
         this.lock = lock;
-
     }
+
 
     public static Ewoks getInstance() { // singleton pattern
         return EwoksHolder.instance;
     }
 
     public static Ewoks getInstance(int size) { // singleton pattern
-        return EwoksHolder.instance;
+        //return EwoksHolder.instance;
     }
 
     public boolean isAvailable(int serial) {

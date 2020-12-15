@@ -82,7 +82,7 @@ public class Main {
 		int numberOfMS = 5;
 		MicroService[] microArray = new MicroService[numberOfMS];
 		Thread[] threads = new Thread[numberOfMS];
-		Ewoks ewoks = Ewoks.getInstance();
+		Ewoks ewoks = Ewoks.getInstance(input.getEwoks());
 
 		microArray[0] = new C3POMicroservice();
 		microArray[1] = new HanSoloMicroservice();
