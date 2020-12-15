@@ -1,8 +1,6 @@
 package bgu.spl.mics.application.passiveObjects;
-import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.application.messages.AttackEvent;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -16,16 +14,19 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Ewoks {
     private static final Ewoks instance = null; // may be final? - Eden //////////////////////////////////////////////
     private final ArrayList<Ewok> ewoksList; // may be final? - Eden //////////////////////////////////////////////
+    private final Boolean lock;
 
     private static class EwoksHolder { // singleton pattern
-        private static Ewoks instance = new Ewoks(0);
+        private static Ewoks instance = new Ewoks(0, true);
     }
 
-    private Ewoks(int size) { // constructor according to the size
+    private Ewoks(int size, Boolean lock) { // constructor according to the size
         this.ewoksList = new ArrayList<>();
         for (int i=0; i < size; i++) {
             this.ewoksList.add(new Ewok(i));
         }
+        this.lock = lock;
+
     }
 
     public static Ewoks getInstance() { // singleton pattern
@@ -34,28 +35,44 @@ public class Ewoks {
 
 
 
-    public void acquire(int serialNumber) {
-        if (serialNumber < ewoksList.size()) {
-            Ewok ewok = ewoksList.get(serialNumber-1);
-            synchronized (this) {
-                while (!ewok.available) {
+
+    public void acquireEwoks(List <Integer> serial) {
+        int currEwok;
+        for (Integer integer : serial) {
+            currEwok = integer;
+            while (!isAvailable(currEwok)) {
+                synchronized (lock) {
                     try {
                         wait(); // blocking!!
                     } catch (InterruptedException e) {
                         System.out.println("InterruptedException on Ewoks acquire()");
                         e.printStackTrace();
-                    }
-                } // while
-                ewok.acquire();
-            } // synchronized
+                    } //catch
+                } // synchronized
+            } // while
+            acquire(currEwok);
+        } // while
+    } // while
+
+    public boolean isAvailable(int num) {
+        Ewok ewok = ewoksList.get(num-1);
+        if (ewok != null)
+            return ewok.isAvailable();
+        return false;
+    }
+
+    public void acquire(int serialNumber) {
+        if(serialNumber < ewoksList.size()) {
+            Ewok ewok = ewoksList.get(serialNumber - 1);
+            ewok.acquire();
         }
     }
 
     public void release(int serialNumber) {
-        if (serialNumber < ewoksList.size()) {
+        if(serialNumber < ewoksList.size()) {
             Ewok ewok = ewoksList.get(serialNumber - 1);
             ewok.release();
-            synchronized (this) {
+            synchronized (lock) {
                 notifyAll(); // give waiting thread opportunity to catch the released Ewok
             }
         }
@@ -63,7 +80,6 @@ public class Ewoks {
 
     public static void initHanSoloAndC3P0(AttackEvent c, Ewoks ewoks) { // to spare code duplications
         List<Integer> serialNumbers = c.getAttack().getSerials();
-        //Collections.sort(serials); // prevent deadlock - Omri   is it still needed? - Eden //////////////////////////////////////
         for(int serial: serialNumbers) { // acquire all resources
             ewoks.acquire(serial); // blocking if ewok not available
         }
