@@ -36,15 +36,6 @@ public class Ewoks {
 
 
     public synchronized void acquireEwoks(List <Integer> serial) {
-        int currEwok;
-//        while (!areAvailable(serial)){ // waiting until **all** the ewoks in the list are available
-//            try {
-//                this.wait();
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
-        // ----- all the ewoks we need are now available! -----
         for (Integer ewok : serial) {
             while (!isAvailable(ewok)) {
                 try {
@@ -58,17 +49,9 @@ public class Ewoks {
         } // for
     }
 
-    public synchronized boolean isAvailable(int num) {
-        return ((num < ewoksList.size()-1) && ewoksList.get(num - 1).isAvailable());
+    public boolean isAvailable(int num) {
+        return (num >= ewoksList.size() - 1 || !ewoksList.get(num - 1).isAvailable());
     }
-
-//    public synchronized boolean areAvailable(List <Integer> serial) {
-//        for (Integer num : serial) {
-//            if((num<serial.size()-1) && (!ewoksList.get(num-1).isAvailable())) // an ewok we need is not available
-//                return false;
-//        }
-//        return true;
-//    }
 
     public void acquire(int serialNumber) {
         if(serialNumber < ewoksList.size()) {
