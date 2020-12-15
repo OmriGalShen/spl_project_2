@@ -28,11 +28,12 @@ public class Ewoks {
     }
 
 
-    private static class EwoksHolder { // singleton pattern
-        private static Ewoks instance = new Ewoks(0, true);
-    }
+//    private static class EwoksHolder { // singleton pattern
+//        private static Ewoks instance = new Ewoks(0, true);
+//    }
 
     private Ewoks(int size, Boolean lock) { // constructor according to the size
+        System.out.println("-------------------------------------------------------" + size);
         this.ewoksList = new ArrayList<>();
         for (int i=0; i < size; i++) {
             this.ewoksList.add(new Ewok(i));
@@ -41,7 +42,7 @@ public class Ewoks {
     }
 
     public static Ewoks getInstance() { // singleton pattern
-        return EwoksHolder.instance;
+        return instance;
     }
 
     public boolean isAvailable(int serial) {
