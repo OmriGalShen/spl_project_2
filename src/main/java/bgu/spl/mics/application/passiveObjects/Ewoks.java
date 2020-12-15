@@ -85,7 +85,7 @@ public class Ewoks {
         }
     }
 
-    public static void init(AttackEvent c, Ewoks ewoks) {
+    public static void initHanSoloAndC3P0(AttackEvent c, Ewoks ewoks) { // to spare code duplications 
         List<Integer> serials = c.getAttack().getSerials();
         Collections.sort(serials); // prevent deadlock
         for(int serial: serials) { // acquire all resources
