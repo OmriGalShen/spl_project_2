@@ -17,8 +17,8 @@ public class Ewok {
      */
 	public Ewok(int serialNumber)
     {
-        available = true;
         this.serialNumber = serialNumber;
+        this.available = true;
     }
   
     /**
@@ -33,5 +33,9 @@ public class Ewok {
      */
     public void release() {
     	available = true;
+    }
+
+    public boolean isAvailable() {
+        return available;
     }
 }
