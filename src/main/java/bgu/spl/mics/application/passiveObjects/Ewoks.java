@@ -13,49 +13,21 @@ import java.util.*;
  * You can add ONLY private methods and fields to this class.
  */
 public class Ewoks {
-    private static final Ewoks instance = null; // may be final? - Eden //////////////////////////////////////////////
-    private final ArrayList<Ewok> ewoksList; // may be final? - Eden //////////////////////////////////////////////
-    private final Boolean lock;
+    private static Ewoks instance = null;
+    private final ArrayList<Ewok> ewoksList;
+    private Boolean lock;
 
 
-
-
-
-
-    /*
-    private Ewoks(){
-        this.ewoksList = new ArrayList<>(0);
-    }
-    private Ewoks(int size){
-        this.ewoksList = new ArrayList<>();
-        for (int i = 0; i <size ; i++) {
-            this.ewoksList.add(new Ewok(i));
-        }
-    }
-    public static Ewoks getInstance(){ //Singleton pattern
-        if(instance == null){
-            //only on creation of first instance synchronize:
-            // this is to make sure only one thread creates the first instance
-            synchronized (Ewoks.class){
-                if(instance==null)
-                    instance = new Ewoks();
-            }
-        }
-        return instance;
-    }
     public static Ewoks getInstance(int size){ //Singleton pattern
         if(instance == null){
             //only on creation of first instance synchronize:
             // this is to make sure only one thread creates the first instance
-            synchronized (Ewoks.class){
-                if(instance==null)
-                    instance = new Ewoks(size);
-            }
+            instance = new Ewoks(size, true);
         }
         return instance;
     }
 
-     */
+
     private static class EwoksHolder { // singleton pattern
         private static Ewoks instance = new Ewoks(0, true);
     }
@@ -68,12 +40,7 @@ public class Ewoks {
         this.lock = lock;
     }
 
-
-//    public static Ewoks getInstance() { // singleton pattern
-//        return EwoksHolder.instance;
-//    }
-
-    public static Ewoks getInstance(int size) { // singleton pattern
+    public static Ewoks getInstance() { // singleton pattern
         return EwoksHolder.instance;
     }
 
