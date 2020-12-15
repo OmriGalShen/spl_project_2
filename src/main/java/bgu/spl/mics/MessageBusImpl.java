@@ -128,20 +128,23 @@ public class MessageBusImpl implements MessageBus {
 	 */
 	@Override
 	public <T> Future<T> sendEvent(Event<T> e) {
+		if(!(eventReceiveQueues.containsKey(e.getClass()) || eventReceiveQueues.get(e.getClass()).isEmpty()))
+			return null; // there is no microservice to receive event
+
+		// ------ there is an available micro service to receive the event ------
 		Future<T> eventFuture = new Future<>(); // the future associated with the event
 		eventFutureMap.put(e, eventFuture); // store the association of the future and the event
-		// no microservice to receive event
-		if(!eventReceiveQueues.containsKey(e.getClass()) || eventReceiveQueues.get(e.getClass()).isEmpty())
-			return eventFuture;
-		// Round Robin:
-		// queue of MicroService who registered to this type of event
+
+		// Round Robin: queue of MicroService who registered to this type of event
 		ConcurrentLinkedQueue<MicroService> receivingQueue = eventReceiveQueues.get(e.getClass());
 		MicroService receivingMicro = receivingQueue.remove(); // remove the first micro in receiving queue
 		receivingQueue.add(receivingMicro); // add to the back of the receiving queue
 		try {
 			messagesMap.get(receivingMicro).put(e); // add message to micro
 		} catch (InterruptedException interruptedException) {
-			System.out.println("InterruptedException while trying to give microservice a message");
+
+			System.out.println("InterruptedException while trying to give microservice a message"); //////////////////////////////////////////
+
 			interruptedException.printStackTrace();
 		}
 		return eventFuture;
@@ -154,7 +157,7 @@ public class MessageBusImpl implements MessageBus {
 	 */
 	@Override
 	public void register(MicroService m) {
-		if(!isRegistered(m)) { // Initialize appropriate empty blocking queues
+		if(!isRegistered(m)) { // initialize appropriate empty blocking queues
 			messagesMap.put(m, new LinkedBlockingQueue<Message>());
 			subscriptionMap.put(m, new LinkedList<Class<? extends Message>>());
 		}
