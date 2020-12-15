@@ -22,6 +22,7 @@ public class Ewoks {
     }
 
     private Ewoks(int size, Boolean lock) { // constructor according to the size
+        System.out.println(size);
         this.ewoksList = new ArrayList<>();
         for (int i=0; i < size; i++) {
             this.ewoksList.add(new Ewok(i));
@@ -34,6 +35,9 @@ public class Ewoks {
         return EwoksHolder.instance;
     }
 
+    public static Ewoks getInstance(int size) { // singleton pattern
+        return EwoksHolder.instance;
+    }
 
     public boolean isAvailable(int serial) {
         return (serial >= ewoksList.size()-1 || !ewoksList.get(serial-1).isAvailable());
