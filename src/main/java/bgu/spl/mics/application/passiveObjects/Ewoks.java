@@ -58,10 +58,12 @@ public class Ewoks {
         Collections.sort(serialNumbers);
         for (Integer serial : serialNumbers) {
             while (!isAvailable(serial)) {
-                try {
-                    this.wait(); // blocking!!
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                synchronized (lock) {
+                    try {
+                        this.wait(); // blocking!!
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             } // while
             acquire(serial);
