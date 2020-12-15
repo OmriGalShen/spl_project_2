@@ -14,12 +14,12 @@ import java.util.concurrent.LinkedBlockingQueue;
  * Only private fields and methods can be added to this class.
  */
 public class MessageBusImpl implements MessageBus {
-	private static MessageBusImpl instance = null; // singleton pattern
-	private ConcurrentHashMap<MicroService, LinkedBlockingQueue<Message>> messagesMap; // store message queue
-	private ConcurrentHashMap<MicroService,LinkedList<Class<? extends Message>>> subscriptionMap; // subscriptions queue
-	private ConcurrentHashMap<Event, Future> eventFutureMap; // store associations of events and Future objects
-	private ConcurrentHashMap<Class<? extends Message>, ConcurrentLinkedQueue<MicroService>> eventReceiveQueues; // for each type of event store receiving microservices
-	private final HashMap<Class<? extends Message>, Callback> callbackMap; // Eden //////////////////////////////////////////////////////////////////
+	private static final MessageBusImpl instance = null; // singleton pattern
+	private final ConcurrentHashMap<MicroService, LinkedBlockingQueue<Message>> messagesMap; // store message queue
+	private final ConcurrentHashMap<MicroService,LinkedList<Class<? extends Message>>> subscriptionMap; // subscriptions queue
+	private final ConcurrentHashMap<Event, Future> eventFutureMap; // store associations of events and Future objects
+	private final ConcurrentHashMap<Class<? extends Message>, ConcurrentLinkedQueue<MicroService>> eventReceiveQueues; // for each type of event store receiving microservices
+	//private final HashMap<Class<? extends Message>, Callback> callbackMap; // Eden //////////////////////////////////////////////////////////////////
 
 	/**
 	 * Private constructor
@@ -27,7 +27,7 @@ public class MessageBusImpl implements MessageBus {
 	 */
 
 	private static class MessageBusImplHolder { // singleton pattern
-		private static MessageBusImpl instance = new MessageBusImpl();
+		private static final MessageBusImpl instance = new MessageBusImpl();
 	}
 
 	private MessageBusImpl() { // singleton pattern
@@ -35,7 +35,7 @@ public class MessageBusImpl implements MessageBus {
 		this.subscriptionMap = new ConcurrentHashMap<>();
 		this.eventFutureMap = new ConcurrentHashMap<>();
 		this.eventReceiveQueues = new ConcurrentHashMap<>();
-		this.callbackMap = new HashMap<>(); // Eden ///////////////////////////////////////////////////////////////////
+		//this.callbackMap = new HashMap<>(); // Eden ///////////////////////////////////////////////////////////////////
 	}
 
 	public static MessageBusImpl getInstance() { // singleton pattern
@@ -84,7 +84,7 @@ public class MessageBusImpl implements MessageBus {
 	 * @param e      The completed event.
 	 * @param result The resolved result of the completed event.
 	 */
-	@Override @SuppressWarnings("unchecked")
+	@Override
 	public <T> void complete(Event<T> e, T result) {
 		if(eventFutureMap.containsKey(e)&&eventFutureMap.get(e) != null) {
 			eventFutureMap.get(e).resolve(result);
@@ -127,21 +127,24 @@ public class MessageBusImpl implements MessageBus {
 	 * 	       null in case no micro-service has subscribed to {@code e.getClass()}.
 	 */
 	@Override
-	public <T> Future<T> sendEvent(Event<T> e) {
+	public synchronized  <T> Future<T> sendEvent(Event<T> e) {
+		if(!(eventReceiveQueues.containsKey(e.getClass()) || eventReceiveQueues.get(e.getClass()).isEmpty()))
+			return null; // there is no microservice to receive event
+
+		// ------ there is an available micro service to receive the event ------
 		Future<T> eventFuture = new Future<>(); // the future associated with the event
 		eventFutureMap.put(e, eventFuture); // store the association of the future and the event
-		// no microservice to receive event
-		if(!eventReceiveQueues.containsKey(e.getClass()) || eventReceiveQueues.get(e.getClass()).isEmpty())
-			return eventFuture;
-		// Round Robin:
-		// queue of MicroService who registered to this type of event
+
+		// Round Robin: queue of MicroService who registered to this type of event
 		ConcurrentLinkedQueue<MicroService> receivingQueue = eventReceiveQueues.get(e.getClass());
 		MicroService receivingMicro = receivingQueue.remove(); // remove the first micro in receiving queue
 		receivingQueue.add(receivingMicro); // add to the back of the receiving queue
 		try {
 			messagesMap.get(receivingMicro).put(e); // add message to micro
 		} catch (InterruptedException interruptedException) {
-			System.out.println("InterruptedException while trying to give microservice a message");
+
+			System.out.println("InterruptedException while trying to give microservice a message"); //////////////////////////////////////////
+
 			interruptedException.printStackTrace();
 		}
 		return eventFuture;
@@ -154,9 +157,9 @@ public class MessageBusImpl implements MessageBus {
 	 */
 	@Override
 	public void register(MicroService m) {
-		if(!isRegistered(m)) { // Initialize appropriate empty blocking queues
-			messagesMap.put(m, new LinkedBlockingQueue<Message>());
-			subscriptionMap.put(m, new LinkedList<Class<? extends Message>>());
+		if(!isRegistered(m)) { // initialize appropriate empty blocking queues
+			messagesMap.put(m, new LinkedBlockingQueue<>());
+			subscriptionMap.put(m, new LinkedList<>());
 		}
 	}
 

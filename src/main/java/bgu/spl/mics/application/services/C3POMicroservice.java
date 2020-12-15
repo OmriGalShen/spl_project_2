@@ -29,7 +29,7 @@ public class C3POMicroservice extends MicroService {
 
             System.out.println("C3PO: I got an attack to do.."); ///////////////////////////////////////////
 
-            Ewoks.initHanSoloAndC3P0(c, ewoks); // a method that sets the Attacks and Ewoks for the micro service //////////////////////
+            Ewoks.getInstance().ResourceManager(c); // a method that sets the Attacks and Ewoks for the micro service //////////////////////
 
             System.out.println("C3PO: I finished this attack!"); ///////////////////////////////////////////
 

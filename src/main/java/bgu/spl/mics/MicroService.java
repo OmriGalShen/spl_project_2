@@ -143,15 +143,15 @@ public abstract class MicroService implements Runnable {
     
 
 
-/*
+
         /**
      * @return the name of the service - the service name is given to it in the
      *         construction time and is used mainly for debugging purposes.
-     * /
+     **/
     public final String getName() {
         return this.name;
     }
-*/
+
 
 
     /**

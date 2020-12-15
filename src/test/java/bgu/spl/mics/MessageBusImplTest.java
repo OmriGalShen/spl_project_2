@@ -26,6 +26,15 @@ class MessageBusImplTest {
     void testComplete() {
         AttackEvent testEvent = new AttackEvent(); //example of event
         C3POMicroservice testC3PO = new C3POMicroservice(); //example of Microservice
+        R2D2Microservice testR2D2 = new R2D2Microservice(100);//example of Microservice
+        testMessageBus.register(testC3PO);
+        testMessageBus.register(testR2D2);
+        testR2D2.subscribeEvent(AttackEvent.class,new Callback<AttackEvent>() {
+            @Override
+            public void call(AttackEvent c) {
+                //empty callback
+            }
+        });
         Future<Boolean> c3p0Future = testC3PO.sendEvent(testEvent);
         if(c3p0Future==null)fail("Returned Future was null");
         else {
@@ -33,6 +42,11 @@ class MessageBusImplTest {
             assertTrue(c3p0Future.isDone()); //check if complete resolved the future
             assertEquals(true, c3p0Future.get()); //check if the resolved passed the value
         }
+        /* unregister methods here were added after unit tests submissions to
+           to prevents problem with singleton MessageBusImp
+         */
+        testMessageBus.unregister(testC3PO);
+        testMessageBus.unregister(testR2D2);
     }
 
     /**

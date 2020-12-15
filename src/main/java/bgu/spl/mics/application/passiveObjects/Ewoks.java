@@ -1,8 +1,6 @@
 package bgu.spl.mics.application.passiveObjects;
-import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.application.messages.AttackEvent;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -15,22 +13,13 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Ewoks {
     private static Ewoks instance = null; // singleton pattern
-    private ArrayList<Ewok> ewoksList; // may be final? - Eden //////////////////////////////////////////////
+    private ArrayList<Ewok> ewoksList;
 
-    private static class EwoksHolder { // singleton pattern
-        private static Ewoks instance = new Ewoks();
-    }
-
-
-    private Ewoks() { // singleton pattern
+    private Ewoks() {
         this.ewoksList = new ArrayList<>(0);
     }
 
-//    public static Ewoks getInstance() { // singleton pattern
-//        return Ewoks.EwoksHolder.instance;
-//   }
-
-    private Ewoks(int size) { // what is this for? - Eden ///////////////////////////////////////////////
+    private Ewoks(int size) {
         this.ewoksList = new ArrayList<>();
         for (int i=0; i < size; i++) {
             this.ewoksList.add(new Ewok(i));
@@ -49,7 +38,6 @@ public class Ewoks {
         return instance;
     }
 
-
     public static Ewoks getInstance(int size) { // singleton pattern
         if(instance == null) {
             // only on creation of first instance synchronize:
@@ -63,6 +51,8 @@ public class Ewoks {
     }
 
     public void acquire(int serialNumber) {
+        if(serialNumber >= ewoksList.size())
+            return;
         Ewok ewok = ewoksList.get(serialNumber-1);
         synchronized (this) {
             while (!ewok.available) {
@@ -78,6 +68,8 @@ public class Ewoks {
     }
 
     public void release(int serialNumber) {
+        if(serialNumber >= ewoksList.size())
+            return;
         Ewok ewok = ewoksList.get(serialNumber-1);
         ewok.release();
         synchronized (this) {
@@ -85,11 +77,11 @@ public class Ewoks {
         }
     }
 
-    public static void initHanSoloAndC3P0(AttackEvent c, Ewoks ewoks) { // to spare code duplications 
+    public void ResourceManager(AttackEvent c) {
         List<Integer> serials = c.getAttack().getSerials();
         Collections.sort(serials); // prevent deadlock
         for(int serial: serials) { // acquire all resources
-            ewoks.acquire(serial); // blocking if ewok not available
+            this.acquire(serial); // blocking if ewok not available
         }
         try { // all resources were acquired
             Thread.sleep(c.getAttack().getDuration());
@@ -97,7 +89,7 @@ public class Ewoks {
             e.printStackTrace();
         }
         for(int serial: serials) { // release all resources
-            ewoks.release(serial);
+            this.release(serial);
         }
     }
 }

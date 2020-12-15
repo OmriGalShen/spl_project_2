@@ -28,4 +28,5 @@ public class Attack {
     public int getDuration() {
         return duration;
     }
+    
 }
