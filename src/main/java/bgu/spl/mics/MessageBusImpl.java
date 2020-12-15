@@ -35,7 +35,7 @@ public class MessageBusImpl implements MessageBus {
 		this.subscriptionMap = new ConcurrentHashMap<>();
 		this.eventFutureMap = new ConcurrentHashMap<>();
 		this.eventReceiveQueues = new ConcurrentHashMap<>();
-		this.callbackMap = new HashMap<>();
+		this.callbackMap = new HashMap<>(); // Eden ///////////////////////////////////////////////////////////////////
 	}
 
 	public static MessageBusImpl getInstance() { // singleton pattern
