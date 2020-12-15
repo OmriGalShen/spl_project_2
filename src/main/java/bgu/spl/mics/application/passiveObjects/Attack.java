@@ -10,19 +10,19 @@ import java.util.List;
  * YDo not add any additional members/method to this class (except for getters).
  */
 public class Attack {
-    final List<Integer> serialNumbers;
-    int duration; // needs to be final? - Eden //////////////////
+    final List<Integer> serials;
+    final int duration;
 
     /**
      * Constructor.
      */
     public Attack(List<Integer> serialNumbers, int duration) {
-        this.serialNumbers = serialNumbers;
+        this.serials = serialNumbers;
         this.duration = duration;
     }
 
-    public List<Integer> getSerialNumbers() {
-        return serialNumbers;
+    public List<Integer> getSerials() {
+        return serials;
     }
 
     public int getDuration() {
